@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -28,6 +29,30 @@ namespace AutismVR.Tests.EditMode
         public void MetaFilesAreVisible()
         {
             Assert.That(VersionControlSettings.mode, Is.EqualTo("Visible Meta Files"));
+        }
+
+        [Test]
+        public void UguiPackageIsInstalled()
+        {
+            Assert.That(Type.GetType("UnityEngine.UI.Image, UnityEngine.UI"), Is.Not.Null);
+        }
+
+        // CloudProjectSettings reports empty while signed out, so check the saved settings.
+        [TestCase("cloudProjectId")]
+        [TestCase("organizationId")]
+        [TestCase("projectName")]
+        public void ProjectIsNotLinkedToAnotherCloudProject(string field)
+        {
+            var settings = File.ReadAllText("ProjectSettings/ProjectSettings.asset");
+
+            Assert.That(Regex.IsMatch(settings, $@"^\s*{field}:[ \t]*\S", RegexOptions.Multiline), Is.False,
+                $"{field} is still set in ProjectSettings.asset");
+        }
+
+        [Test]
+        public void LegacyAnalyticsIsDisabled()
+        {
+            Assert.That(UnityEditor.Analytics.AnalyticsSettings.enabled, Is.False);
         }
 
         [TestCase("Assets/GoogleVR")]

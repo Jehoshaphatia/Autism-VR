@@ -12,10 +12,21 @@ namespace AutismVR.Editor
     public static class VerificationCommands
     {
         [CliCommand("autismvr_open_scene", "Open a scene in the Editor by asset path")]
-        public static string OpenScene([CliArg("path", "Scene asset path")] string path)
+        public static string OpenScene([CliArg("path", "Scene asset path")] string path,
+            [CliArg("discard", "Discard unsaved changes in open scenes")] bool discard = false)
         {
             if (AssetDatabase.LoadAssetAtPath<SceneAsset>(path) == null)
                 throw new ArgumentException($"No scene asset at {path}", nameof(path));
+
+            // Over the CLI there is no save prompt, so refuse rather than silently lose edits.
+            var dirtyScenes = Enumerable.Range(0, SceneManager.sceneCount)
+                .Select(SceneManager.GetSceneAt)
+                .Where(scene => scene.isDirty)
+                .Select(scene => string.IsNullOrEmpty(scene.path) ? "Untitled" : scene.path)
+                .ToList();
+            if (dirtyScenes.Count > 0 && !discard)
+                throw new InvalidOperationException(
+                    $"Unsaved changes in {string.Join(", ", dirtyScenes)}; save them or pass --discard true");
 
             return EditorSceneManager.OpenScene(path, OpenSceneMode.Single).name;
         }

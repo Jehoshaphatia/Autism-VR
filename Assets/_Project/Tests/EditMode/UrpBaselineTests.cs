@@ -12,11 +12,15 @@ namespace AutismVR.Tests.EditMode
 {
     public class UrpBaselineTests
     {
-        // Skybox/, UI/ and Sprites/ are Unity built-in shaders that render correctly under URP.
+        // Skybox/, UI/, Sprites/ and Unlit/ are Unity built-in shaders that render under URP
+        // (unlit passes run as SRPDefaultUnlit).
         static readonly string[] UrpCompatibleShaderPrefixes =
         {
-            "Universal Render Pipeline/", "Shader Graphs/", "Hidden/", "Skybox/", "UI/", "Sprites/"
+            "Universal Render Pipeline/", "Shader Graphs/", "Hidden/", "Skybox/", "UI/", "Sprites/", "Unlit/"
         };
+
+        // Shaders shipped inside imported package samples (XRI, XR Hands) are maintained by Unity for URP.
+        const string SamplesFolder = "Assets/Samples/";
 
         [Test]
         public void DefaultRenderPipelineIsUrp()
@@ -88,7 +92,8 @@ namespace AutismVR.Tests.EditMode
                 .SelectMany(path => AssetDatabase.LoadAllAssetsAtPath(path).OfType<Material>()
                     .Select(material => (path, material)))
                 .Where(entry => entry.material.shader.name == "Hidden/InternalErrorShader"
-                                || !UrpCompatibleShaderPrefixes.Any(prefix => entry.material.shader.name.StartsWith(prefix)))
+                                || (!UrpCompatibleShaderPrefixes.Any(prefix => entry.material.shader.name.StartsWith(prefix))
+                                    && !AssetDatabase.GetAssetPath(entry.material.shader).StartsWith(SamplesFolder)))
                 .Select(entry => $"{entry.path} ({entry.material.name}) -> {entry.material.shader.name}")
                 .ToList();
         }

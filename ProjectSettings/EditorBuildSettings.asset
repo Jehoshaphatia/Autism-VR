@@ -6,23 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/_Scenes/Autism1.unity
-    guid: cd9e8aa3b0a071e47825c0da0191c300
-  - enabled: 1
-    path: Assets/_Scenes/Autism01.unity
-    guid: 757ec9230c67b3c41b343be3dc2901e1
-  - enabled: 0
-    path: Assets/Autism_Level_1.unity
-    guid: 972dad20afb32f14996074545df0055c
-  - enabled: 1
-    path: Assets/SpeechSandbox/_Scenes/MainGame/MainMenu.unity
-    guid: d3ea3bec60666fb498bb14b8a39cf8a7
-  - enabled: 1
-    path: Assets/SpeechSandbox/_Scenes/MainGame/Tutorial.unity
-    guid: fea6174c1e0f024469d675d46e96a002
-  - enabled: 1
-    path: Assets/SpeechSandbox/_Scenes/MainGame/Sandbox.unity
-    guid: eed1b71e0fd20fb4fadc8fe3b43e2b49
+    path: Assets/_Project/Scenes/Room.unity
+    guid: fb38f465d0c924087961bf8a2c22d487
   m_configObjects:
+    com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: a12a0f52dd7a8465794e3d0caf72cefa, type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: c4f5119764b384726aaf2948123e031d, type: 2}
     com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 1786342ef59e8448494d4e259d0f2583, type: 2}

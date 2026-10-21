@@ -84,10 +84,12 @@ namespace AutismVR.Editor
                 .Where(upgrader => !upgrader.NewShaderPath.Contains("/2D/"))
                 .ToList();
             var converted = 0;
+            var materialPaths = AssetDatabase.FindAssets("t:Material", new[] { "Assets" })
+                .Select(AssetDatabase.GUIDToAssetPath)
+                .Where(path => path.EndsWith(".mat", StringComparison.OrdinalIgnoreCase))
+                .ToList();
 
-            foreach (var path in AssetDatabase.FindAssets("t:Material", new[] { "Assets" })
-                         .Select(AssetDatabase.GUIDToAssetPath)
-                         .Where(path => path.EndsWith(".mat", StringComparison.OrdinalIgnoreCase)))
+            foreach (var path in materialPaths)
             {
                 var material = AssetDatabase.LoadAssetAtPath<Material>(path);
                 if (material == null || !upgraders.Any(upgrader => upgrader.OldShaderPath == material.shader.name))
@@ -107,6 +109,10 @@ namespace AutismVR.Editor
                 EditorUtility.SetDirty(material);
                 converted++;
             }
+
+            // XRI/XR Hands sample MaterialPipelineHandlers switch shaders in memory and only save on a
+            // later editor frame, which batch runs never reach; write every material's current state.
+            AssetDatabase.ForceReserializeAssets(materialPaths);
             return converted;
         }
 

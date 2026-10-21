@@ -14,7 +14,9 @@
         "Unity.XR.OpenXR.Editor",
         "Unity.XR.OpenXR.Features.MetaQuestSupport",
         "Unity.InputSystem",
-        "Unity.XR.Hands"
+        "Unity.XR.Hands",
+        "Unity.XR.CoreUtils",
+        "Unity.XR.Interaction.Toolkit"
     ],
     "includePlatforms": [
         "Editor"

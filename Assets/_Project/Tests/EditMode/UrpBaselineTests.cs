@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -47,6 +49,23 @@ namespace AutismVR.Tests.EditMode
             var offenders = FindNonUrpMaterials("Assets");
 
             Assert.That(offenders, Is.Empty, string.Join("\n", offenders));
+        }
+
+        // A material stamped -1 is skipped by URP's material upgraders in future URP releases.
+        [Test]
+        public void EveryMaterialIsAtCurrentUrpMaterialVersion()
+        {
+            var projectVersion = Regex.Match(File.ReadAllText("ProjectSettings/URPProjectSettings.asset"),
+                @"m_LastMaterialVersion: (-?\d+)").Groups[1].Value;
+            var stale = Directory.GetFiles("Assets", "*.mat", SearchOption.AllDirectories)
+                .Select(path => (path, version: Regex.Match(File.ReadAllText(path),
+                    @"UnityEditor\.Rendering\.Universal\.AssetVersion\s*\n\s*version: (-?\d+)").Groups[1].Value))
+                .Where(entry => entry.version.Length > 0 && entry.version != projectVersion)
+                .Select(entry => $"{entry.path} -> {entry.version}")
+                .ToList();
+
+            Assert.That(projectVersion, Is.Not.Empty);
+            Assert.That(stale, Is.Empty, string.Join("\n", stale));
         }
 
         [Test]

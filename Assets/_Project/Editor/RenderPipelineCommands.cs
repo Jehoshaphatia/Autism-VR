@@ -22,11 +22,26 @@ namespace AutismVR.Editor
         public static string ApplyUrp()
         {
             var urpAsset = LoadOrCreateUrpAsset();
+            EnsurePostProcessData();
             AssignEverywhere(urpAsset);
             var converted = ConvertProjectMaterials();
             ReimportModels();
             AssetDatabase.SaveAssets();
             return converted.ToString();
+        }
+
+        const string DefaultPostProcessDataPath =
+            "Packages/com.unity.render-pipelines.universal/Runtime/Data/PostProcessData.asset";
+
+        // Without post-process data on the renderer, Volume overrides silently do nothing.
+        public static void EnsurePostProcessData()
+        {
+            var rendererData = AssetDatabase.LoadAssetAtPath<UniversalRendererData>(UrpRendererPath);
+            if (rendererData == null || rendererData.postProcessData != null)
+                return;
+
+            rendererData.postProcessData = AssetDatabase.LoadAssetAtPath<PostProcessData>(DefaultPostProcessDataPath);
+            EditorUtility.SetDirty(rendererData);
         }
 
         static UniversalRenderPipelineAsset LoadOrCreateUrpAsset()

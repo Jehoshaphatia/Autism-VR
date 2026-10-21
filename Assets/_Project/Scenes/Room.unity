@@ -7388,7 +7388,7 @@ Transform:
   m_GameObject: {fileID: 910886000}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.08905456, z: 0, w: 0.99602675}
-  m_LocalPosition: {x: -0.39, y: -0.13, z: 13.26}
+  m_LocalPosition: {x: -0.39, y: -0.047244072, z: 13.26}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12061,7 +12061,7 @@ Transform:
   m_GameObject: {fileID: 1646349840}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.08905456, z: 0, w: 0.99602675}
-  m_LocalPosition: {x: -0.2835591, y: 0.29500002, z: 13.850483}
+  m_LocalPosition: {x: -0.2835591, y: 0.37775594, z: 13.850483}
   m_LocalScale: {x: 0.2, y: 0.425, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12674,7 +12674,7 @@ Transform:
   m_GameObject: {fileID: 1839422661}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.99602675, z: 0, w: -0.08905456}
-  m_LocalPosition: {x: 0.357, y: -0.085, z: 17.404}
+  m_LocalPosition: {x: 0.357, y: -0.047244072, z: 17.404}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14043,6 +14043,7 @@ MonoBehaviour:
   m_Pressed:
     m_PersistentCalls:
       m_Calls: []
+  m_PressFrom: 5
 --- !u!114 &2042908409
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14060,7 +14061,7 @@ MonoBehaviour:
   m_PokeConfiguration:
     m_UseConstant: 1
     m_ConstantValue:
-      m_PokeDirection: 3
+      m_PokeDirection: 5
       m_InteractionDepthOffset: 0
       m_EnablePokeAngleThreshold: 1
       m_PokeAngleThreshold: 45
@@ -14226,7 +14227,7 @@ Transform:
   m_GameObject: {fileID: 2042908407}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.08905456, z: 0, w: 0.99602675}
-  m_LocalPosition: {x: -0.2835591, y: 0.77, z: 13.850483}
+  m_LocalPosition: {x: -0.2835591, y: 0.8527559, z: 13.850483}
   m_LocalScale: {x: 0.08, y: 0.02, z: 0.08}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14433,13 +14434,17 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 28ac69fdad7e64d599c6def8c8d05ed0, type: 2}
+    - target: {fileID: 1820897918385990095, guid: d6878e1999eb4b44a9f5a263af86c185, type: 3}
+      propertyPath: m_RequestedTrackingOriginMode
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2218496723442559053, guid: d6878e1999eb4b44a9f5a263af86c185, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.39
       objectReference: {fileID: 0}
     - target: {fileID: 2218496723442559053, guid: d6878e1999eb4b44a9f5a263af86c185, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.13
+      value: -0.047244072
       objectReference: {fileID: 0}
     - target: {fileID: 2218496723442559053, guid: d6878e1999eb4b44a9f5a263af86c185, type: 3}
       propertyPath: m_LocalPosition.z

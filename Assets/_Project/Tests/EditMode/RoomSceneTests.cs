@@ -7,6 +7,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
+using UnityEngine.XR.Interaction.Toolkit.Filtering;
 
 namespace AutismVR.Tests.EditMode
 {
@@ -15,8 +16,8 @@ namespace AutismVR.Tests.EditMode
         [SetUp]
         public void OpenRoom()
         {
-            Assume.That(AssetDatabase.LoadAssetAtPath<SceneAsset>(RoomSceneCommands.RoomScenePath), Is.Not.Null,
-                "Room scene has not been generated");
+            Assert.That(AssetDatabase.LoadAssetAtPath<SceneAsset>(RoomSceneCommands.RoomScenePath), Is.Not.Null,
+                "Room scene is missing");
             EditorSceneManager.OpenScene(RoomSceneCommands.RoomScenePath, OpenSceneMode.Single);
         }
 
@@ -84,7 +85,12 @@ namespace AutismVR.Tests.EditMode
         [Test]
         public void BothHandsHavePokeInteractors()
         {
+            // The rig also carries controller pokes; only pokes under the modality manager's hand objects count.
+            var modality = Object.FindFirstObjectByType<UnityEngine.XR.Interaction.Toolkit.Inputs.XRInputModalityManager>();
+            Assert.That(modality, Is.Not.Null);
+            var handRoots = new[] { modality.leftHand, modality.rightHand }.Where(h => h != null).Select(h => h.transform).ToList();
             var handedness = Object.FindObjectsByType<XRPokeInteractor>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+                .Where(poke => handRoots.Any(root => poke.transform.IsChildOf(root)))
                 .Select(poke => poke.handedness).ToList();
 
             Assert.That(handedness, Does.Contain(InteractorHandedness.Left));
@@ -103,6 +109,36 @@ namespace AutismVR.Tests.EditMode
             Assert.That(Vector3.Distance(origin.transform.position, trainer.transform.position), Is.LessThan(0.01f));
             var toChild = Vector3.ProjectOnPlane(child.transform.position - trainer.transform.position, Vector3.up).normalized;
             Assert.That(Vector3.Dot(origin.transform.forward, toChild), Is.GreaterThan(0.99f));
+        }
+
+        [Test]
+        public void XrOriginTracksFromTheFloor()
+        {
+            var origin = Object.FindFirstObjectByType<XROrigin>();
+
+            Assert.That(origin.RequestedTrackingOriginMode, Is.EqualTo(XROrigin.TrackingOriginMode.Floor));
+        }
+
+        [TestCase(RoomSceneCommands.TrainerSpawnName)]
+        [TestCase(RoomSceneCommands.ChildSpawnName)]
+        public void SpawnStandsOnTheFloorSurface(string spawnName)
+        {
+            var spawn = GameObject.Find(spawnName).transform.position;
+            Physics.SyncTransforms();
+            var hit = Physics.RaycastAll(spawn + Vector3.up * 1.5f, Vector3.down, 3f)
+                .Where(h => h.collider.name == RoomSceneCommands.FloorColliderName)
+                .OrderBy(h => h.distance).First();
+
+            Assert.That(spawn.y, Is.EqualTo(hit.point.y).Within(0.01f));
+        }
+
+        [Test]
+        public void StartButtonIsPressedFromAbove()
+        {
+            var filter = GameObject.Find(RoomSceneCommands.StartButtonName)
+                .GetComponent<UnityEngine.XR.Interaction.Toolkit.Filtering.XRPokeFilter>();
+
+            Assert.That(filter.pokeConfiguration.Value.pokeDirection, Is.EqualTo(PokeAxis.NegativeY));
         }
 
         [Test]

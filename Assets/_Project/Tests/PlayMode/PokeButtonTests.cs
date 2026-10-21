@@ -17,16 +17,61 @@ namespace AutismVR.Tests.PlayMode
         [SetUp]
         public void CreateButton()
         {
-            m_Manager = new GameObject("Manager").AddComponent<XRInteractionManager>();
-            var buttonObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            m_Manager = Track(new GameObject("Manager")).AddComponent<XRInteractionManager>();
+            var buttonObject = Track(GameObject.CreatePrimitive(PrimitiveType.Cube));
+            buttonObject.transform.localScale = new Vector3(0.08f, 0.02f, 0.08f);
             m_Button = buttonObject.AddComponent<PokeButton>();
+        }
+
+        readonly System.Collections.Generic.List<GameObject> m_Created = new System.Collections.Generic.List<GameObject>();
+
+        GameObject Track(GameObject go)
+        {
+            m_Created.Add(go);
+            return go;
         }
 
         [TearDown]
         public void DestroyObjects()
         {
-            foreach (var go in Object.FindObjectsByType<GameObject>(FindObjectsSortMode.None))
-                Object.Destroy(go);
+            foreach (var go in m_Created)
+                if (go != null)
+                    Object.Destroy(go);
+            m_Created.Clear();
+        }
+
+        // Moves a real poke interactor from `from` to `to` over many frames, so XRPokeFilter's depth and
+        // direction checks run exactly as they do with a tracked fingertip.
+        IEnumerator MovePoke(XRPokeInteractor poke, Vector3 from, Vector3 to, int frames = 40)
+        {
+            for (var i = 0; i <= frames; i++)
+            {
+                poke.transform.position = Vector3.Lerp(from, to, i / (float)frames);
+                yield return null;
+            }
+        }
+
+        // The StartButton is a flat disc lying on a pedestal, so a trainee presses its top downward.
+        [UnityTest]
+        public IEnumerator PokeButton_FingertipPressingDownOnTop_RaisesPressed()
+        {
+            var poke = Track(new GameObject("Poke")).AddComponent<XRPokeInteractor>();
+            yield return null;
+
+            yield return MovePoke(poke, new Vector3(0f, 0.1f, 0f), new Vector3(0f, -0.005f, 0f));
+
+            Assert.That(m_Button.PressCount, Is.EqualTo(1));
+        }
+
+        [UnityTest]
+        public IEnumerator PokeButton_FingertipJabbingSideways_DoesNotRaisePressed()
+        {
+            var poke = Track(new GameObject("Poke")).AddComponent<XRPokeInteractor>();
+            yield return null;
+
+            yield return MovePoke(poke, new Vector3(0f, 0f, -0.1f), new Vector3(0f, 0f, 0.02f));
+
+            Assert.That(m_Button.PressCount, Is.EqualTo(0));
         }
 
         // Bypasses XRPokeFilter's physical poke-depth check (XRI's behaviour, exercised live in the
@@ -34,7 +79,7 @@ namespace AutismVR.Tests.PlayMode
         [UnityTest]
         public IEnumerator PokeButton_PokeSelect_RaisesPressed()
         {
-            var poke = new GameObject("Poke").AddComponent<XRPokeInteractor>();
+            var poke = Track(new GameObject("Poke")).AddComponent<XRPokeInteractor>();
             var pressedEvents = 0;
             m_Button.Pressed.AddListener(() => pressedEvents++);
             yield return null;
@@ -49,12 +94,14 @@ namespace AutismVR.Tests.PlayMode
         [UnityTest]
         public IEnumerator PokeButton_RaySelect_DoesNotRaisePressed()
         {
-            var ray = new GameObject("Ray").AddComponent<XRRayInteractor>();
+            var ray = Track(new GameObject("Ray")).AddComponent<XRRayInteractor>();
+            var interactable = m_Button.GetComponent<XRSimpleInteractable>();
             yield return null;
 
-            m_Manager.SelectEnterUnconditionally((IXRSelectInteractor)ray, m_Button.GetComponent<XRSimpleInteractable>());
+            m_Manager.SelectEnterUnconditionally((IXRSelectInteractor)ray, interactable);
             yield return null;
 
+            Assert.That(interactable.isSelected, Is.True, "the ray select must reach the button for this test to mean anything");
             Assert.That(m_Button.PressCount, Is.EqualTo(0));
         }
     }

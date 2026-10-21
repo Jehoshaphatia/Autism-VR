@@ -20,6 +20,7 @@ namespace AutismVR.Editor
         public const string TrainerSpawnName = "TrainerSpawn";
         public const string ChildSpawnName = "ChildSpawn";
         public const string StartButtonName = "StartButton";
+        public const string FloorColliderName = "Floor";
         public static readonly Color NeutralLightColor = new Color32(0xFF, 0xF4, 0xE5, 0xFF);
 
         // The furnished room in Autism1; every other root was legacy rig, UI, the old child character,
@@ -171,6 +172,45 @@ namespace AutismVR.Editor
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
             return replaced.ToString();
+        }
+
+        // Puts the trainer and child on the floor surface, tracks the rig from the floor, and writes the
+        // StartButton's press-from-above poke setting into the scene.
+        [CliCommand("autismvr_align_room", "Align Room spawns, rig and StartButton to the floor and set floor tracking")]
+        public static string AlignRoom()
+        {
+            var scene = EditorSceneManager.OpenScene(RoomScenePath, OpenSceneMode.Single);
+            Physics.SyncTransforms();
+
+            var trainer = GameObject.Find(TrainerSpawnName).transform;
+            var child = GameObject.Find(ChildSpawnName).transform;
+            var lift = FloorHeightBelow(trainer.position) - trainer.position.y;
+            child.position = new Vector3(child.position.x, FloorHeightBelow(child.position), child.position.z);
+            trainer.position += Vector3.up * lift;
+            foreach (var name in new[] { StartButtonName, "StartButtonPedestal" })
+                GameObject.Find(name).transform.position += Vector3.up * lift;
+
+            var origin = UnityEngine.Object.FindFirstObjectByType<Unity.XR.CoreUtils.XROrigin>();
+            origin.transform.SetPositionAndRotation(trainer.position, trainer.rotation);
+            origin.RequestedTrackingOriginMode = Unity.XR.CoreUtils.XROrigin.TrackingOriginMode.Floor;
+            EditorUtility.SetDirty(origin);
+
+            var button = GameObject.Find(StartButtonName).GetComponent<AutismVR.Interaction.PokeButton>();
+            button.ConfigurePokeFilter();
+            EditorUtility.SetDirty(button.GetComponent<UnityEngine.XR.Interaction.Toolkit.Filtering.XRPokeFilter>());
+
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            return lift.ToString("F3");
+        }
+
+        static float FloorHeightBelow(Vector3 position)
+        {
+            var hits = Physics.RaycastAll(position + Vector3.up * 1.5f, Vector3.down, 3f)
+                .Where(hit => hit.collider.name == FloorColliderName).OrderBy(hit => hit.distance).ToList();
+            if (hits.Count == 0)
+                throw new InvalidOperationException($"No {FloorColliderName} collider below {position}");
+            return hits[0].point.y;
         }
 
         public const string LineMaterialPath = "Assets/_Project/Materials/LineUnlit.mat";

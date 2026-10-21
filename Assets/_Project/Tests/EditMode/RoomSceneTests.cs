@@ -75,6 +75,20 @@ namespace AutismVR.Tests.EditMode
         }
 
         [Test]
+        public void RoomHasStartButtonInFrontOfSpawn()
+        {
+            var button = GameObject.Find(RoomSceneCommands.StartButtonName);
+            var spawn = GameObject.Find(RoomSceneCommands.TrainerSpawnName).transform;
+
+            Assert.That(button, Is.Not.Null);
+            Assert.That(button.GetComponent<AutismVR.Interaction.PokeButton>(), Is.Not.Null);
+            var local = spawn.InverseTransformPoint(button.transform.position);
+            Assert.That(local.z, Is.InRange(0.5f, 0.7f), "distance in front of the spawn");
+            Assert.That(local.y, Is.InRange(0.8f, 1.0f), "height above the floor");
+            Assert.That(Mathf.Abs(local.x), Is.LessThan(0.2f), "centred on the trainer");
+        }
+
+        [Test]
         public void RoomHasOnlyNeutralDirectionalLight()
         {
             var lights = Object.FindObjectsByType<Light>(FindObjectsInactive.Include, FindObjectsSortMode.None);

@@ -19,6 +19,7 @@ namespace AutismVR.Editor
             "Assets/Samples/XR Interaction Toolkit/3.6.1/Hands Interaction Demo/Prefabs/XR Origin Hands (XR Rig).prefab";
         public const string TrainerSpawnName = "TrainerSpawn";
         public const string ChildSpawnName = "ChildSpawn";
+        public const string StartButtonName = "StartButton";
         public static readonly Color NeutralLightColor = new Color32(0xFF, 0xF4, 0xE5, 0xFF);
 
         // The furnished room in Autism1; every other root was legacy rig, UI, the old child character,
@@ -51,6 +52,7 @@ namespace AutismVR.Editor
             CreateSpawn(ChildSpawnName, childPosition, trainerPosition);
             Relight();
             AddHandsRig(trainerSpawn.transform);
+            AddStartButton(trainerSpawn.transform);
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
@@ -104,6 +106,23 @@ namespace AutismVR.Editor
                          ?? throw new InvalidOperationException($"Missing {HandsRigPrefabPath}; run autismvr_import_xr_samples");
             var rig = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
             rig.transform.SetPositionAndRotation(spawn.position, spawn.rotation);
+        }
+
+        // A pedestal with a fingertip button 0.6 m in front of the trainer at 0.9 m.
+        static void AddStartButton(Transform spawn)
+        {
+            var pedestal = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            pedestal.name = "StartButtonPedestal";
+            pedestal.transform.SetPositionAndRotation(spawn.TransformPoint(0f, 0.425f, 0.6f), spawn.rotation);
+            pedestal.transform.localScale = new Vector3(0.2f, 0.425f, 0.2f);
+
+            var button = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            button.name = StartButtonName;
+            button.transform.SetPositionAndRotation(spawn.TransformPoint(0f, 0.9f, 0.6f), spawn.rotation);
+            button.transform.localScale = new Vector3(0.08f, 0.02f, 0.08f);
+            UnityEngine.Object.DestroyImmediate(button.GetComponent<Collider>());
+            button.AddComponent<BoxCollider>();
+            button.AddComponent<AutismVR.Interaction.PokeButton>();
         }
 
         static void EnsureFolder(string path)

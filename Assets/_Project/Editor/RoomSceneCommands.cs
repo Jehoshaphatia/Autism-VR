@@ -125,6 +125,69 @@ namespace AutismVR.Editor
             button.AddComponent<AutismVR.Interaction.PokeButton>();
         }
 
+        // Unity built-in Skybox/, UI/, Sprites/ and Unlit/ shaders render under URP; shaders shipped in the
+        // imported XRI/XR Hands samples are maintained for URP.
+        static readonly string[] UrpCompatibleShaderPrefixes =
+        {
+            "Universal Render Pipeline/", "Shader Graphs/", "Skybox/", "UI/", "Sprites/", "Unlit/"
+        };
+
+        public static bool IsUrpCompatible(Material material)
+        {
+            if (material == null || material.shader == null || material.shader.name == "Hidden/InternalErrorShader")
+                return false;
+            return UrpCompatibleShaderPrefixes.Any(prefix => material.shader.name.StartsWith(prefix))
+                   || AssetDatabase.GetAssetPath(material.shader).StartsWith("Assets/Samples/");
+        }
+
+        // Room.unity is edited in place now; this removes what the Autism1 copy carried over unnoticed:
+        // renderers on Unity's built-in Default-Material (magenta under URP) and the old game's score sign.
+        [CliCommand("autismvr_clean_room", "Replace non-URP renderer materials and remove the legacy score canvas in Room")]
+        public static string CleanRoom()
+        {
+            var scene = EditorSceneManager.OpenScene(RoomScenePath, OpenSceneMode.Single);
+            var urpDefault = GraphicsSettings.defaultRenderPipeline.defaultMaterial;
+            var lineMaterial = LoadOrCreateLineMaterial();
+            var replaced = 0;
+
+            foreach (var renderer in scene.GetRootGameObjects().SelectMany(root => root.GetComponentsInChildren<Renderer>(true)))
+            {
+                var materials = renderer.sharedMaterials;
+                for (var i = 0; i < materials.Length; i++)
+                {
+                    if (IsUrpCompatible(materials[i]))
+                        continue;
+                    materials[i] = renderer is LineRenderer || renderer is TrailRenderer ? lineMaterial : urpDefault;
+                    replaced++;
+                }
+                renderer.sharedMaterials = materials;
+            }
+
+            foreach (var canvas in scene.GetRootGameObjects()
+                         .SelectMany(root => root.GetComponentsInChildren<Transform>(true))
+                         .Where(t => t.name == "ScoreCanvas").Select(t => t.gameObject).ToList())
+                UnityEngine.Object.DestroyImmediate(canvas);
+
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            return replaced.ToString();
+        }
+
+        public const string LineMaterialPath = "Assets/_Project/Materials/LineUnlit.mat";
+
+        // Interactor line visuals ship with Unity's built-in Default-Line (legacy particles shader).
+        static Material LoadOrCreateLineMaterial()
+        {
+            var material = AssetDatabase.LoadAssetAtPath<Material>(LineMaterialPath);
+            if (material != null)
+                return material;
+
+            EnsureFolder("Assets/_Project/Materials");
+            material = new Material(Shader.Find("Universal Render Pipeline/Particles/Unlit")) { name = "LineUnlit" };
+            AssetDatabase.CreateAsset(material, LineMaterialPath);
+            return material;
+        }
+
         static void EnsureFolder(string path)
         {
             if (!AssetDatabase.IsValidFolder(path))

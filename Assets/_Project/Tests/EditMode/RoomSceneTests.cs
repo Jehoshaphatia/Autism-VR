@@ -30,6 +30,27 @@ namespace AutismVR.Tests.EditMode
             Assert.That(error.Message, Does.Contain("Room.unity is the source of truth"));
         }
 
+        // Renderers can point at Unity's built-in Default-Material (Standard), which no material-asset
+        // check sees and which renders magenta under URP.
+        [Test]
+        public void RoomRenderersUseUrpCompatibleMaterials()
+        {
+            var offenders = SceneObjects()
+                .SelectMany(go => go.GetComponents<Renderer>())
+                .SelectMany(r => r.sharedMaterials.Select(m => (r, m)))
+                .Where(entry => !RoomSceneCommands.IsUrpCompatible(entry.m))
+                .Select(entry => $"{entry.r.name} -> {(entry.m == null ? "null" : entry.m.shader.name)}")
+                .ToList();
+
+            Assert.That(offenders, Is.Empty, string.Join("\n", offenders));
+        }
+
+        [Test]
+        public void RoomHasNoLegacyScoreCanvas()
+        {
+            Assert.That(SceneObjects().Where(go => go.name == "ScoreCanvas"), Is.Empty);
+        }
+
         [Test]
         public void RoomHasNoMissingScripts()
         {

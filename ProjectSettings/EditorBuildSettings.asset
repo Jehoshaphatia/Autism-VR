@@ -23,4 +23,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/SpeechSandbox/_Scenes/MainGame/Sandbox.unity
     guid: eed1b71e0fd20fb4fadc8fe3b43e2b49
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: c4f5119764b384726aaf2948123e031d, type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 1786342ef59e8448494d4e259d0f2583, type: 2}

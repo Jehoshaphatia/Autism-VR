@@ -1,0 +1,130 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Unity.Pipeline.Commands;
+using UnityEditor;
+using UnityEditor.Rendering;
+using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+
+namespace AutismVR.Editor
+{
+    public static class RenderPipelineCommands
+    {
+        public const string UrpAssetPath = "Assets/_Project/Settings/URP-Quest.asset";
+        public const string UrpRendererPath = "Assets/_Project/Settings/URP-Quest_Renderer.asset";
+
+        static readonly string[] ModelExtensions = { ".fbx", ".obj" };
+
+        [CliCommand("autismvr_apply_urp",
+            "Create the Quest URP asset, assign it everywhere and convert Built-in materials")]
+        public static string ApplyUrp()
+        {
+            var urpAsset = LoadOrCreateUrpAsset();
+            AssignEverywhere(urpAsset);
+            var converted = ConvertProjectMaterials();
+            ReimportModels();
+            AssetDatabase.SaveAssets();
+            return converted.ToString();
+        }
+
+        static UniversalRenderPipelineAsset LoadOrCreateUrpAsset()
+        {
+            var existing = AssetDatabase.LoadAssetAtPath<UniversalRenderPipelineAsset>(UrpAssetPath);
+            if (existing != null)
+                return existing;
+
+            if (!AssetDatabase.IsValidFolder("Assets/_Project/Settings"))
+                AssetDatabase.CreateFolder("Assets/_Project", "Settings");
+
+            var rendererData = ScriptableObject.CreateInstance<UniversalRendererData>();
+            AssetDatabase.CreateAsset(rendererData, UrpRendererPath);
+
+            var urpAsset = UniversalRenderPipelineAsset.Create(rendererData);
+            urpAsset.msaaSampleCount = 4;
+            urpAsset.supportsHDR = false;
+            AssetDatabase.CreateAsset(urpAsset, UrpAssetPath);
+            return urpAsset;
+        }
+
+        static void AssignEverywhere(UniversalRenderPipelineAsset urpAsset)
+        {
+            GraphicsSettings.defaultRenderPipeline = urpAsset;
+
+            var originalLevel = QualitySettings.GetQualityLevel();
+            for (var i = 0; i < QualitySettings.count; i++)
+            {
+                QualitySettings.SetQualityLevel(i, false);
+                QualitySettings.renderPipeline = urpAsset;
+            }
+            QualitySettings.SetQualityLevel(originalLevel, false);
+        }
+
+        // Converts editable .mat assets with URP's 3D upgraders only: the 2D upgraders also claim
+        // "Standard" and would silently land materials on a 2D shader.
+        static int ConvertProjectMaterials()
+        {
+            var upgraders = MaterialUpgrader.FetchAllUpgradersForPipeline(typeof(UniversalRenderPipelineAsset))
+                .Where(upgrader => !upgrader.NewShaderPath.Contains("/2D/"))
+                .ToList();
+            var converted = 0;
+
+            foreach (var path in AssetDatabase.FindAssets("t:Material", new[] { "Assets" })
+                         .Select(AssetDatabase.GUIDToAssetPath)
+                         .Where(path => path.EndsWith(".mat", StringComparison.OrdinalIgnoreCase)))
+            {
+                var material = AssetDatabase.LoadAssetAtPath<Material>(path);
+                if (material == null || !upgraders.Any(upgrader => upgrader.OldShaderPath == material.shader.name))
+                    continue;
+
+                var mainTex = material.HasProperty("_MainTex") ? material.GetTexture("_MainTex") : null;
+                var scale = material.HasProperty("_MainTex") ? material.GetTextureScale("_MainTex") : Vector2.one;
+                var offset = material.HasProperty("_MainTex") ? material.GetTextureOffset("_MainTex") : Vector2.zero;
+                var color = material.HasProperty("_Color") ? material.GetColor("_Color") : Color.white;
+
+                MaterialUpgrader.Upgrade(material, upgraders, MaterialUpgrader.UpgradeFlags.None);
+                RestoreBaseProperties(material, mainTex, scale, offset, color);
+
+                if (material.shader.name.Contains("/2D/"))
+                    throw new InvalidOperationException($"{path} landed on 2D shader {material.shader.name}");
+
+                EditorUtility.SetDirty(material);
+                converted++;
+            }
+            return converted;
+        }
+
+        static void RestoreBaseProperties(Material material, Texture mainTex, Vector2 scale, Vector2 offset, Color color)
+        {
+            if (mainTex != null && material.HasProperty("_BaseMap") && material.GetTexture("_BaseMap") == null)
+            {
+                material.SetTexture("_BaseMap", mainTex);
+                material.SetTextureScale("_BaseMap", scale);
+                material.SetTextureOffset("_BaseMap", offset);
+            }
+            if (material.HasProperty("_BaseColor") && material.GetColor("_BaseColor") == Color.white && color != Color.white)
+                material.SetColor("_BaseColor", color);
+        }
+
+        // Embedded model materials are regenerated by the importer with the active pipeline's shaders.
+        static void ReimportModels()
+        {
+            var modelPaths = AssetDatabase.GetAllAssetPaths()
+                .Where(path => path.StartsWith("Assets/"))
+                .Where(path => ModelExtensions.Any(ext => path.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
+                .ToList();
+
+            AssetDatabase.StartAssetEditing();
+            try
+            {
+                foreach (var path in modelPaths)
+                    AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+            }
+            finally
+            {
+                AssetDatabase.StopAssetEditing();
+            }
+        }
+    }
+}

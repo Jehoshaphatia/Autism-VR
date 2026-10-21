@@ -1,85 +1,233 @@
 fileFormatVersion: 2
 guid: 213c227c5da816844a6ed69bcf9ed5c3
-timeCreated: 1532101850
-licenseType: Free
 ModelImporter:
-  serializedVersion: 22
-  fileIDToRecycleName:
-    100000: luxury_house_interior:Box017
-    100002: luxury_house_interior:Box019
-    100004: luxury_house_interior:Box021
-    100006: luxury_house_interior:Box023
-    100008: luxury_house_interior:Box024
-    100010: luxury_house_interior:Box025
-    100012: luxury_house_interior:Box047
-    100014: luxury_house_interior:Box048
-    100016: luxury_house_interior:Box049
-    100018: luxury_house_interior:Box050
-    100020: luxury_house_interior:Box073
-    100022: luxury_house_interior:Box074
-    100024: luxury_house_interior:Box074_MeshPart0
-    100026: luxury_house_interior:Box074_MeshPart1
-    100028: luxury_house_interior:Cylinder051
-    100030: luxury_house_interior:Cylinder052
-    100032: luxury_house_interior:Cylinder053
-    100034: luxury_house_interior:Cylinder054
-    100036: luxury_house_interior:transform10
-    100038: luxury_house_interior:transform11
-    100040: luxury_house_interior:transform12
-    100042: luxury_house_interior:transform13
-    100044: luxury_house_interior:transform14
-    100046: luxury_house_interior:transform15
-    100048: luxury_house_interior:transform16
-    100050: luxury_house_interior:transform17
-    100052: luxury_house_interior:transform3
-    100054: luxury_house_interior:transform4
-    100056: luxury_house_interior:transform5
-    100058: luxury_house_interior:transform6
-    100060: luxury_house_interior:transform7
-    100062: luxury_house_interior:transform8
-    100064: luxury_house_interior:transform9
-    100066: //RootNode
-    400000: luxury_house_interior:Box017
-    400002: luxury_house_interior:Box019
-    400004: luxury_house_interior:Box021
-    400006: luxury_house_interior:Box023
-    400008: luxury_house_interior:Box024
-    400010: luxury_house_interior:Box025
-    400012: luxury_house_interior:Box047
-    400014: luxury_house_interior:Box048
-    400016: luxury_house_interior:Box049
-    400018: luxury_house_interior:Box050
-    400020: luxury_house_interior:Box073
-    400022: luxury_house_interior:Box074
-    400024: luxury_house_interior:Box074_MeshPart0
-    400026: luxury_house_interior:Box074_MeshPart1
-    400028: luxury_house_interior:Cylinder051
-    400030: luxury_house_interior:Cylinder052
-    400032: luxury_house_interior:Cylinder053
-    400034: luxury_house_interior:Cylinder054
-    400036: luxury_house_interior:transform10
-    400038: luxury_house_interior:transform11
-    400040: luxury_house_interior:transform12
-    400042: luxury_house_interior:transform13
-    400044: luxury_house_interior:transform14
-    400046: luxury_house_interior:transform15
-    400048: luxury_house_interior:transform16
-    400050: luxury_house_interior:transform17
-    400052: luxury_house_interior:transform3
-    400054: luxury_house_interior:transform4
-    400056: luxury_house_interior:transform5
-    400058: luxury_house_interior:transform6
-    400060: luxury_house_interior:transform7
-    400062: luxury_house_interior:transform8
-    400064: luxury_house_interior:transform9
-    400066: //RootNode
-    2300000: luxury_house_interior:Box074_MeshPart0
-    2300002: luxury_house_interior:Box074_MeshPart1
-    3300000: luxury_house_interior:Box074_MeshPart0
-    3300002: luxury_house_interior:Box074_MeshPart1
-    4300000: luxury_house_interior:Box074_MeshPart0
-    4300002: luxury_house_interior:Box074_MeshPart1
-    9500000: //RootNode
+  serializedVersion: 24600
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: luxury_house_interior:Box017
+  - first:
+      1: 100002
+    second: luxury_house_interior:Box019
+  - first:
+      1: 100004
+    second: luxury_house_interior:Box021
+  - first:
+      1: 100006
+    second: luxury_house_interior:Box023
+  - first:
+      1: 100008
+    second: luxury_house_interior:Box024
+  - first:
+      1: 100010
+    second: luxury_house_interior:Box025
+  - first:
+      1: 100012
+    second: luxury_house_interior:Box047
+  - first:
+      1: 100014
+    second: luxury_house_interior:Box048
+  - first:
+      1: 100016
+    second: luxury_house_interior:Box049
+  - first:
+      1: 100018
+    second: luxury_house_interior:Box050
+  - first:
+      1: 100020
+    second: luxury_house_interior:Box073
+  - first:
+      1: 100022
+    second: luxury_house_interior:Box074
+  - first:
+      1: 100024
+    second: luxury_house_interior:Box074_MeshPart0
+  - first:
+      1: 100026
+    second: luxury_house_interior:Box074_MeshPart1
+  - first:
+      1: 100028
+    second: luxury_house_interior:Cylinder051
+  - first:
+      1: 100030
+    second: luxury_house_interior:Cylinder052
+  - first:
+      1: 100032
+    second: luxury_house_interior:Cylinder053
+  - first:
+      1: 100034
+    second: luxury_house_interior:Cylinder054
+  - first:
+      1: 100036
+    second: luxury_house_interior:transform10
+  - first:
+      1: 100038
+    second: luxury_house_interior:transform11
+  - first:
+      1: 100040
+    second: luxury_house_interior:transform12
+  - first:
+      1: 100042
+    second: luxury_house_interior:transform13
+  - first:
+      1: 100044
+    second: luxury_house_interior:transform14
+  - first:
+      1: 100046
+    second: luxury_house_interior:transform15
+  - first:
+      1: 100048
+    second: luxury_house_interior:transform16
+  - first:
+      1: 100050
+    second: luxury_house_interior:transform17
+  - first:
+      1: 100052
+    second: luxury_house_interior:transform3
+  - first:
+      1: 100054
+    second: luxury_house_interior:transform4
+  - first:
+      1: 100056
+    second: luxury_house_interior:transform5
+  - first:
+      1: 100058
+    second: luxury_house_interior:transform6
+  - first:
+      1: 100060
+    second: luxury_house_interior:transform7
+  - first:
+      1: 100062
+    second: luxury_house_interior:transform8
+  - first:
+      1: 100064
+    second: luxury_house_interior:transform9
+  - first:
+      1: 100066
+    second: //RootNode
+  - first:
+      4: 400000
+    second: luxury_house_interior:Box017
+  - first:
+      4: 400002
+    second: luxury_house_interior:Box019
+  - first:
+      4: 400004
+    second: luxury_house_interior:Box021
+  - first:
+      4: 400006
+    second: luxury_house_interior:Box023
+  - first:
+      4: 400008
+    second: luxury_house_interior:Box024
+  - first:
+      4: 400010
+    second: luxury_house_interior:Box025
+  - first:
+      4: 400012
+    second: luxury_house_interior:Box047
+  - first:
+      4: 400014
+    second: luxury_house_interior:Box048
+  - first:
+      4: 400016
+    second: luxury_house_interior:Box049
+  - first:
+      4: 400018
+    second: luxury_house_interior:Box050
+  - first:
+      4: 400020
+    second: luxury_house_interior:Box073
+  - first:
+      4: 400022
+    second: luxury_house_interior:Box074
+  - first:
+      4: 400024
+    second: luxury_house_interior:Box074_MeshPart0
+  - first:
+      4: 400026
+    second: luxury_house_interior:Box074_MeshPart1
+  - first:
+      4: 400028
+    second: luxury_house_interior:Cylinder051
+  - first:
+      4: 400030
+    second: luxury_house_interior:Cylinder052
+  - first:
+      4: 400032
+    second: luxury_house_interior:Cylinder053
+  - first:
+      4: 400034
+    second: luxury_house_interior:Cylinder054
+  - first:
+      4: 400036
+    second: luxury_house_interior:transform10
+  - first:
+      4: 400038
+    second: luxury_house_interior:transform11
+  - first:
+      4: 400040
+    second: luxury_house_interior:transform12
+  - first:
+      4: 400042
+    second: luxury_house_interior:transform13
+  - first:
+      4: 400044
+    second: luxury_house_interior:transform14
+  - first:
+      4: 400046
+    second: luxury_house_interior:transform15
+  - first:
+      4: 400048
+    second: luxury_house_interior:transform16
+  - first:
+      4: 400050
+    second: luxury_house_interior:transform17
+  - first:
+      4: 400052
+    second: luxury_house_interior:transform3
+  - first:
+      4: 400054
+    second: luxury_house_interior:transform4
+  - first:
+      4: 400056
+    second: luxury_house_interior:transform5
+  - first:
+      4: 400058
+    second: luxury_house_interior:transform6
+  - first:
+      4: 400060
+    second: luxury_house_interior:transform7
+  - first:
+      4: 400062
+    second: luxury_house_interior:transform8
+  - first:
+      4: 400064
+    second: luxury_house_interior:transform9
+  - first:
+      4: 400066
+    second: //RootNode
+  - first:
+      23: 2300000
+    second: luxury_house_interior:Box074_MeshPart0
+  - first:
+      23: 2300002
+    second: luxury_house_interior:Box074_MeshPart1
+  - first:
+      33: 3300000
+    second: luxury_house_interior:Box074_MeshPart0
+  - first:
+      33: 3300002
+    second: luxury_house_interior:Box074_MeshPart1
+  - first:
+      43: 4300000
+    second: luxury_house_interior:Box074_MeshPart0
+  - first:
+      43: 4300002
+    second: luxury_house_interior:Box074_MeshPart1
+  - first:
+      95: 9500000
+    second: //RootNode
   externalObjects:
   - first:
       type: UnityEngine:Material
@@ -87,23 +235,24 @@ ModelImporter:
       name: lambert1
     second: {fileID: 2100000, guid: 38c6a56b9d9d127419972fd9a6203647, type: 2}
   materials:
-    importMaterials: 1
+    materialImportMode: 1
     materialName: 0
     materialSearch: 1
     materialLocation: 0
+    searchTexturesGlobally: 1
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
     resampleCurves: 1
     optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
+    importConstraints: 0
     animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
@@ -118,30 +267,57 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    preBakeConvexCollisionMesh: 0
+    preBakeTriangleCollisionMesh: 0
+    importPhysicalCameras: 0
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
     importLights: 1
+    nodeNameCollisionStrategy: 0
+    fileIdsGeneration: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
+    importUVs: -1
+    importVertexColors: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 0
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 1
+    strictVertexDataChecks: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+    calculateBlendshapeNormalsDeltaFromImportedNormals: 1
+  referencedClips: []
   importAnimation: 1
-  copyAvatar: 0
   humanDescription:
-    serializedVersion: 2
+    serializedVersion: 3
     human: []
     skeleton: []
     armTwist: 0.5
@@ -151,14 +327,19 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 1
     rootMotionBoneName: 
-    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
+  avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 0
+  importBlendShapeDeformPercent: 0
+  remapMaterialsIfMaterialImportModeIsNone: 1
   additionalBone: 0
   userData: 
   assetBundleName: 

@@ -1,0 +1,19 @@
+{
+    "name": "AutismVR.Editor",
+    "rootNamespace": "AutismVR.Editor",
+    "references": [
+        "Unity.Pipeline",
+        "Unity.Pipeline.Attributes"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

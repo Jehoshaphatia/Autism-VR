@@ -11,11 +11,8 @@ namespace AutismVR.Tests.EditMode
 {
     public class VerificationCommandsTests
     {
-        const string Autism1Path = "Assets/_Scenes/Autism1.unity";
-
-        // Missing-script components left in Autism1 by the removed SDKs: 15 MORPH3D,
-        // 2 SpeechSandboxStreaming, 1 CanvasDisable. F2 replaces this scene.
-        const int Autism1MissingScriptBaseline = 18;
+        const string RoomPath = RoomSceneCommands.RoomScenePath;
+        const string MissingScriptFixturePath = "Assets/_Project/Tests/EditMode/Fixtures/MissingScript.unity";
 
         [SetUp]
         public void StartFromCleanScene()
@@ -24,14 +21,9 @@ namespace AutismVR.Tests.EditMode
         }
 
         [Test]
-        public void OpenScene_Autism1_ReturnsSceneName()
+        public void OpenScene_Room_ReturnsSceneName()
         {
-            // Autism1 still holds prefab instances from the removed SDKs (MORPH3D child,
-            // ViveCameraRig); Unity logs one error per missing prefab but the scene opens.
-            LogAssert.ignoreFailingMessages = true;
-            LogAssert.Expect(LogType.Error, new Regex("Problem detected while opening the Scene file"));
-
-            Assert.That(VerificationCommands.OpenScene(Autism1Path), Is.EqualTo("Autism1"));
+            Assert.That(VerificationCommands.OpenScene(RoomPath), Is.EqualTo("Room"));
         }
 
         [Test]
@@ -40,27 +32,34 @@ namespace AutismVR.Tests.EditMode
             new GameObject("UnsavedEdit");
             EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
 
-            Assert.Throws<InvalidOperationException>(() => VerificationCommands.OpenScene(Autism1Path));
+            Assert.Throws<InvalidOperationException>(() => VerificationCommands.OpenScene(RoomPath));
             Assert.That(GameObject.Find("UnsavedEdit"), Is.Not.Null);
         }
 
         [Test]
         public void OpenScene_UnsavedChangesWithDiscard_Opens()
         {
-            LogAssert.ignoreFailingMessages = true;
             new GameObject("UnsavedEdit");
             EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
 
-            Assert.That(VerificationCommands.OpenScene(Autism1Path, discard: true), Is.EqualTo("Autism1"));
+            Assert.That(VerificationCommands.OpenScene(RoomPath, discard: true), Is.EqualTo("Room"));
         }
 
         [Test]
-        public void MissingScriptCount_Autism1_MatchesKnownBaseline()
+        public void MissingScriptCount_SceneWithMissingScript_CountsIt()
         {
-            LogAssert.ignoreFailingMessages = true;
-            VerificationCommands.OpenScene(Autism1Path);
+            // A MonoBehaviour whose script cannot be resolved; loaded from a minimal fixture scene.
+            VerificationCommands.OpenScene(MissingScriptFixturePath);
 
-            Assert.That(VerificationCommands.MissingScriptCount(), Is.EqualTo(Autism1MissingScriptBaseline));
+            Assert.That(VerificationCommands.MissingScriptCount(), Is.EqualTo(1));
+        }
+
+        [Test]
+        public void MissingScriptCount_Room_IsZero()
+        {
+            VerificationCommands.OpenScene(RoomPath);
+
+            Assert.That(VerificationCommands.MissingScriptCount(), Is.EqualTo(0));
         }
 
         [Test]

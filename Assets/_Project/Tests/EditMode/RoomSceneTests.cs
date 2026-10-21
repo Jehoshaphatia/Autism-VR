@@ -21,6 +21,16 @@ namespace AutismVR.Tests.EditMode
         }
 
         [Test]
+        public void BuildRoomScene_WithoutAutism1_Throws()
+        {
+            Assume.That(AssetDatabase.LoadAssetAtPath<SceneAsset>(RoomSceneCommands.SourceScenePath), Is.Null,
+                "Autism1 still exists, so BuildRoomScene would regenerate Room");
+
+            var error = Assert.Throws<System.InvalidOperationException>(() => RoomSceneCommands.BuildRoomScene());
+            Assert.That(error.Message, Does.Contain("Room.unity is the source of truth"));
+        }
+
+        [Test]
         public void RoomHasNoMissingScripts()
         {
             Assert.That(VerificationCommands.MissingScriptCount(), Is.EqualTo(0));

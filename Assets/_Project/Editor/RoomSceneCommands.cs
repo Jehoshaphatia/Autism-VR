@@ -231,7 +231,8 @@ namespace AutismVR.Editor
             }
             var pedestalHalfHeight = (local.y - ButtonHalfThickness) / 2f;
             pedestal.transform.SetPositionAndRotation(spawn.TransformPoint(local.x, pedestalHalfHeight, local.z), spawn.rotation);
-            pedestal.transform.localScale = new Vector3(0.2f, pedestalHalfHeight, 0.2f);
+            // A slim column keeps the button from hiding what stands behind it.
+            pedestal.transform.localScale = new Vector3(0.05f, pedestalHalfHeight, 0.05f);
 
             if (button == null)
             {
@@ -242,7 +243,7 @@ namespace AutismVR.Editor
                 button.AddComponent<AutismVR.Interaction.PokeButton>();
             }
             button.transform.SetPositionAndRotation(spawn.TransformPoint(local), spawn.rotation);
-            button.transform.localScale = new Vector3(0.08f, ButtonHalfThickness, 0.08f);
+            button.transform.localScale = new Vector3(0.1f, ButtonHalfThickness, 0.1f);
             return (button, pedestal);
         }
 

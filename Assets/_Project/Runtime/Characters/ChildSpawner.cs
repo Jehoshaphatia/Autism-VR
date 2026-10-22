@@ -11,6 +11,7 @@ namespace AutismVR.Characters
         [SerializeField] Transform m_FaceTowards;
 
         public ChildAnimator Spawned { get; private set; }
+        public CharacterProfile SpawnedProfile { get; private set; }
         public CharacterProfile DefaultProfile => m_DefaultProfile;
         public Transform SpawnPoint => m_SpawnPoint;
         public Transform FaceTowards => m_FaceTowards;
@@ -37,6 +38,7 @@ namespace AutismVR.Characters
             var rotation = facing.sqrMagnitude > 0f ? Quaternion.LookRotation(facing) : m_SpawnPoint.rotation;
             var child = Instantiate(profile.ModelPrefab, m_SpawnPoint.position, rotation);
             Spawned = child.GetComponent<ChildAnimator>();
+            SpawnedProfile = profile;
         }
 
         static bool HasModel(CharacterProfile profile) => profile != null && profile.ModelPrefab != null;

@@ -47,6 +47,11 @@ namespace AutismVR.Characters
 
         void Choose()
         {
+            // One choice per visit: switch every choice off so a second hand, a poke-then-pinch or a
+            // neighbouring button cannot reload Room or swap the child.
+            foreach (var choice in FindObjectsByType<CharacterChoice>(FindObjectsSortMode.None))
+                choice.enabled = false;
+
             SelectedCharacter.Choose(m_Profile);
             (SceneLoader ?? (scene => UnityEngine.SceneManagement.SceneManager.LoadScene(scene)))(m_NextScene);
         }

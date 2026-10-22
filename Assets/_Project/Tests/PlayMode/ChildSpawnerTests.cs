@@ -74,5 +74,30 @@ namespace AutismVR.Tests.PlayMode
             Assert.That(m_Spawner.Spawned, Is.Not.Null);
             Assert.That(m_Spawner.Spawned.name, Does.StartWith(LoadProfile("aj").ModelPrefab.name));
         }
+    
+        // A selected profile with no model (e.g. edited by an admin) must still give the trainee a child.
+        [UnityTest]
+        public IEnumerator ChildSpawner_SelectedProfileWithoutModel_SpawnsDefaultProfile()
+        {
+            var broken = ScriptableObject.CreateInstance<CharacterProfile>();
+            SelectedCharacter.Choose(broken);
+            CreateSpawnerNow();
+            yield return null;
+
+            Assert.That(m_Spawner.Spawned, Is.Not.Null);
+            Assert.That(m_Spawner.Spawned.name, Does.StartWith(LoadProfile("aj").ModelPrefab.name));
+        }
+
+        [UnityTest]
+        public IEnumerator ChildSpawner_NoFaceTarget_UsesSpawnRotation()
+        {
+            m_Spawn.rotation = Quaternion.Euler(0f, 90f, 0f);
+            m_Spawner = new GameObject("Spawner").AddComponent<ChildSpawner>();
+            m_Spawner.Configure(LoadProfile("aj"), m_Spawn, null);
+            yield return null;
+
+            Assert.That(m_Spawner.Spawned, Is.Not.Null);
+            Assert.That(Quaternion.Angle(m_Spawner.Spawned.transform.rotation, m_Spawn.rotation), Is.LessThan(1f));
+        }
     }
 }

@@ -37,5 +37,43 @@ namespace AutismVR.Tests.PlayMode
                 Object.Destroy(choice.gameObject);
             }
         }
+    
+        // A stray second press (other hand, poke then pinch, a neighbouring button) must not reload Room
+        // or switch the child.
+        [UnityTest]
+        public IEnumerator CharacterChoice_AfterFirstChoice_FurtherPressesAreIgnored()
+        {
+            SelectedCharacter.Clear();
+            var first = ScriptableObject.CreateInstance<CharacterProfile>();
+            var second = ScriptableObject.CreateInstance<CharacterProfile>();
+            var firstButtonObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            var secondButtonObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            var firstChoice = new GameObject("First").AddComponent<CharacterChoice>();
+            var secondChoice = new GameObject("Second").AddComponent<CharacterChoice>();
+            firstChoice.Configure(first, firstButtonObject.AddComponent<PokeButton>(), null, null);
+            secondChoice.Configure(second, secondButtonObject.AddComponent<PokeButton>(), null, null);
+            var loads = 0;
+            firstChoice.SceneLoader = _ => loads++;
+            secondChoice.SceneLoader = _ => loads++;
+            try
+            {
+                yield return null;
+
+                firstChoice.Button.Pressed.Invoke();
+                firstChoice.Button.Pressed.Invoke();
+                secondChoice.Button.Pressed.Invoke();
+
+                Assert.That(loads, Is.EqualTo(1));
+                Assert.That(SelectedCharacter.Current, Is.SameAs(first));
+            }
+            finally
+            {
+                SelectedCharacter.Clear();
+                Object.Destroy(firstButtonObject);
+                Object.Destroy(secondButtonObject);
+                Object.Destroy(firstChoice.gameObject);
+                Object.Destroy(secondChoice.gameObject);
+            }
+        }
     }
 }

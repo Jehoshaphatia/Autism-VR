@@ -107,6 +107,18 @@ namespace AutismVR.Tests.PlayMode
             Assert.That(m_Button.PressCount, Is.EqualTo(1));
         }
 
+        // SelectEnterUnconditionally skips select filters; check the button's XRPokeFilter lets the
+        // look-and-pinch interactor through, so the real path is not blocked.
+        [UnityTest]
+        public IEnumerator PokeButton_PokeFilter_AllowsLookAndPinchInteractor()
+        {
+            var nearFar = Track(new GameObject("NearFar")).AddComponent<NearFarInteractor>();
+            yield return null;
+
+            var filter = (UnityEngine.XR.Interaction.Toolkit.Filtering.IXRSelectFilter)m_Button.GetComponent<UnityEngine.XR.Interaction.Toolkit.Filtering.XRPokeFilter>();
+            Assert.That(filter.Process(nearFar, m_Button.GetComponent<XRSimpleInteractable>()), Is.True);
+        }
+
         [UnityTest]
         public IEnumerator PokeButton_RaySelect_DoesNotRaisePressed()
         {

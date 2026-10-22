@@ -24,17 +24,21 @@ namespace AutismVR.Characters
 
         void Start()
         {
-            var profile = SelectedCharacter.Current != null ? SelectedCharacter.Current : m_DefaultProfile;
-            if (profile == null || profile.ModelPrefab == null || m_SpawnPoint == null)
+            var profile = HasModel(SelectedCharacter.Current) ? SelectedCharacter.Current : m_DefaultProfile;
+            if (!HasModel(profile) || m_SpawnPoint == null)
             {
-                Debug.LogError("ChildSpawner has no profile, model or spawn point", this);
+                Debug.LogError("ChildSpawner has no profile with a model, or no spawn point", this);
                 return;
             }
 
-            var facing = Vector3.ProjectOnPlane(m_FaceTowards.position - m_SpawnPoint.position, Vector3.up);
+            var facing = m_FaceTowards != null
+                ? Vector3.ProjectOnPlane(m_FaceTowards.position - m_SpawnPoint.position, Vector3.up)
+                : Vector3.zero;
             var rotation = facing.sqrMagnitude > 0f ? Quaternion.LookRotation(facing) : m_SpawnPoint.rotation;
             var child = Instantiate(profile.ModelPrefab, m_SpawnPoint.position, rotation);
             Spawned = child.GetComponent<ChildAnimator>();
         }
+
+        static bool HasModel(CharacterProfile profile) => profile != null && profile.ModelPrefab != null;
     }
 }

@@ -77,7 +77,7 @@ namespace AutismVR.Editor
         }
 
         // Shadowless key light: the room is enclosed, so a shadow-casting sun would leave it dark.
-        static void Relight()
+        public static void Relight()
         {
             var sun = new GameObject("Sun", typeof(Light));
             var light = sun.GetComponent<Light>();
@@ -147,22 +147,7 @@ namespace AutismVR.Editor
         public static string CleanRoom()
         {
             var scene = EditorSceneManager.OpenScene(RoomScenePath, OpenSceneMode.Single);
-            var urpDefault = GraphicsSettings.defaultRenderPipeline.defaultMaterial;
-            var lineMaterial = LoadOrCreateLineMaterial();
-            var replaced = 0;
-
-            foreach (var renderer in scene.GetRootGameObjects().SelectMany(root => root.GetComponentsInChildren<Renderer>(true)))
-            {
-                var materials = renderer.sharedMaterials;
-                for (var i = 0; i < materials.Length; i++)
-                {
-                    if (IsUrpCompatible(materials[i]))
-                        continue;
-                    materials[i] = renderer is LineRenderer || renderer is TrailRenderer ? lineMaterial : urpDefault;
-                    replaced++;
-                }
-                renderer.sharedMaterials = materials;
-            }
+            var replaced = ReplaceNonUrpRendererMaterials(scene);
 
             foreach (var canvas in scene.GetRootGameObjects()
                          .SelectMany(root => root.GetComponentsInChildren<Transform>(true))
@@ -227,6 +212,76 @@ namespace AutismVR.Editor
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
             return spawner.name;
+        }
+
+        // Button centre height and distance ahead of the trainer: about 33 degrees below a 1.6 m eye
+        // line, so it is in view and within arm's reach.
+        public const float ButtonCentreHeight = 1.18f;
+        public const float ButtonDistanceAhead = 0.65f;
+        const float ButtonHalfThickness = 0.02f;
+
+        // A fingertip button seated on a pedestal at `local` (x, centre y, z) in the spawn's space.
+        public static (GameObject button, GameObject pedestal) PlaceButtonOnPedestal(
+            Transform spawn, Vector3 local, string buttonName, GameObject button = null, GameObject pedestal = null)
+        {
+            if (pedestal == null)
+            {
+                pedestal = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                pedestal.name = buttonName + "Pedestal";
+            }
+            var pedestalHalfHeight = (local.y - ButtonHalfThickness) / 2f;
+            pedestal.transform.SetPositionAndRotation(spawn.TransformPoint(local.x, pedestalHalfHeight, local.z), spawn.rotation);
+            pedestal.transform.localScale = new Vector3(0.2f, pedestalHalfHeight, 0.2f);
+
+            if (button == null)
+            {
+                button = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                button.name = buttonName;
+                UnityEngine.Object.DestroyImmediate(button.GetComponent<Collider>());
+                button.AddComponent<BoxCollider>();
+                button.AddComponent<AutismVR.Interaction.PokeButton>();
+            }
+            button.transform.SetPositionAndRotation(spawn.TransformPoint(local), spawn.rotation);
+            button.transform.localScale = new Vector3(0.08f, ButtonHalfThickness, 0.08f);
+            return (button, pedestal);
+        }
+
+        [CliCommand("autismvr_place_start_button", "Move Room's StartButton into view and seat it on its pedestal")]
+        public static string PlaceStartButton()
+        {
+            var scene = EditorSceneManager.OpenScene(RoomScenePath, OpenSceneMode.Single);
+            PlaceButtonOnPedestal(GameObject.Find(TrainerSpawnName).transform,
+                new Vector3(0f, ButtonCentreHeight, ButtonDistanceAhead), StartButtonName,
+                GameObject.Find(StartButtonName), GameObject.Find("StartButtonPedestal"));
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            return StartButtonName;
+        }
+
+        // Renderers on Unity's built-in Default-Material or Default-Line (as shipped on the XRI hands rig)
+        // render magenta under URP; give them URP Lit or a URP particles line material.
+        public static int ReplaceNonUrpRendererMaterials(UnityEngine.SceneManagement.Scene scene)
+        {
+            var urpDefault = GraphicsSettings.defaultRenderPipeline.defaultMaterial;
+            var lineMaterial = LoadOrCreateLineMaterial();
+            var replaced = 0;
+
+            foreach (var renderer in scene.GetRootGameObjects().SelectMany(root => root.GetComponentsInChildren<Renderer>(true)))
+            {
+                var materials = renderer.sharedMaterials;
+                var changed = false;
+                for (var i = 0; i < materials.Length; i++)
+                {
+                    if (IsUrpCompatible(materials[i]))
+                        continue;
+                    materials[i] = renderer is LineRenderer || renderer is TrailRenderer ? lineMaterial : urpDefault;
+                    changed = true;
+                    replaced++;
+                }
+                if (changed)
+                    renderer.sharedMaterials = materials;
+            }
+            return replaced;
         }
 
         public const string LineMaterialPath = "Assets/_Project/Materials/LineUnlit.mat";

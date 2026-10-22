@@ -6,8 +6,11 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/_Project/Scenes/Chooser.unity
+    guid: 47e9eb36c24164a01ad2edfb61ffd6af
+  - enabled: 1
     path: Assets/_Project/Scenes/Room.unity
-    guid: fb38f465d0c924087961bf8a2c22d487
+    guid: a76963837739a4048b08c5ff5788f3a9
   m_configObjects:
     com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: a12a0f52dd7a8465794e3d0caf72cefa, type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: c4f5119764b384726aaf2948123e031d, type: 2}

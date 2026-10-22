@@ -213,6 +213,22 @@ namespace AutismVR.Editor
             return hits[0].point.y;
         }
 
+        // Adds the spawner that places the chosen child at ChildSpawn, facing the trainer.
+        [CliCommand("autismvr_add_child_spawner", "Add the ChildSpawner to Room, wired to the spawns and the default profile")]
+        public static string AddChildSpawner()
+        {
+            var scene = EditorSceneManager.OpenScene(RoomScenePath, OpenSceneMode.Single);
+            var spawner = UnityEngine.Object.FindFirstObjectByType<AutismVR.Characters.ChildSpawner>()
+                          ?? new GameObject("ChildSpawner").AddComponent<AutismVR.Characters.ChildSpawner>();
+            spawner.Configure(CharacterProfileCommands.Load(CharacterProfileCommands.DefaultProfileId),
+                GameObject.Find(ChildSpawnName).transform, GameObject.Find(TrainerSpawnName).transform);
+            EditorUtility.SetDirty(spawner);
+
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            return spawner.name;
+        }
+
         public const string LineMaterialPath = "Assets/_Project/Materials/LineUnlit.mat";
 
         // Interactor line visuals ship with Unity's built-in Default-Line (legacy particles shader).

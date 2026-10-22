@@ -112,6 +112,17 @@ namespace AutismVR.Tests.EditMode
         }
 
         [Test]
+        public void RoomHasChildSpawnerWiredToSpawns()
+        {
+            var spawners = Object.FindObjectsByType<AutismVR.Characters.ChildSpawner>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+            Assert.That(spawners, Has.Length.EqualTo(1));
+            Assert.That(spawners[0].SpawnPoint, Is.SameAs(GameObject.Find(RoomSceneCommands.ChildSpawnName).transform));
+            Assert.That(spawners[0].FaceTowards, Is.SameAs(GameObject.Find(RoomSceneCommands.TrainerSpawnName).transform));
+            Assert.That(spawners[0].DefaultProfile, Is.SameAs(CharacterProfileCommands.Load(CharacterProfileCommands.DefaultProfileId)));
+        }
+
+        [Test]
         public void XrOriginTracksFromTheFloor()
         {
             var origin = Object.FindFirstObjectByType<XROrigin>();

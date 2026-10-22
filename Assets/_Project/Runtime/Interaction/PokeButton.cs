@@ -9,8 +9,9 @@ namespace AutismVR.Interaction
 {
     // A button pressed with a fingertip from above (it lies flat, facing up), or with look-and-pinch:
     // on Meta VR Glasses that arrives as the hand's NearFarInteractor select. The Quest hand ray is the
-    // same interactor, so a far hand-ray pinch on Quest presses too (accepted by the owner, F3). The
-    // teleport/controller ray interactor and gaze dwell are ignored.
+    // same interactor, so a far hand-ray pinch on Quest presses too (accepted by the owner, F3). In the
+    // XRI starter rig a controller's ray is also a NearFarInteractor, so a controller trigger presses as
+    // well. The teleport XRRayInteractor and gaze dwell are ignored.
     [RequireComponent(typeof(XRSimpleInteractable), typeof(XRPokeFilter))]
     public class PokeButton : MonoBehaviour
     {

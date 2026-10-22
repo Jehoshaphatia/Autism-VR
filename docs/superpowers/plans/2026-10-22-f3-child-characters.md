@@ -103,8 +103,9 @@
 > Quest hand ray, and that nothing at runtime tells Meta VR Glasses apart from a Quest. "Only when
 > the session is gaze-driven" could not be implemented. `PokeButton` instead accepts every
 > `NearFarInteractor` select, so on Quest a far hand-ray pinch also presses buttons. The owner
-> accepted this; `PokeButton_FarHandRayPinch_RaisesPressed` pins it. `PokeButton_RaySelect_DoesNotRaisePressed` still pins that a plain
-> `XRRayInteractor` (controller ray) does not press.
+> accepted this; `PokeButton_FarHandRayPinch_RaisesPressed` pins it. `PokeButton_RaySelect_DoesNotRaisePressed` pins that the teleport
+> `XRRayInteractor` does not press. A controller's ray is also a `NearFarInteractor` in the XRI
+> starter rig, so if a Quest user picks up a controller, its trigger presses buttons too.
 
 ### Task 7: Build, simulator evidence, PR
 

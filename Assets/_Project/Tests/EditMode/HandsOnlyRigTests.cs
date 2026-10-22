@@ -23,20 +23,28 @@ namespace AutismVR.Tests.EditMode
             var modality = managers[0];
             Assert.That(modality.leftController, Is.Not.Null);
             Assert.That(modality.rightController, Is.Not.Null);
+            Assert.That(modality.leftHand, Is.Not.Null);
+            Assert.That(modality.rightHand, Is.Not.Null);
 
             bool Under(Component c, GameObject root) => root != null && c.transform.IsChildOf(root.transform);
             var interactors = Object.FindObjectsByType<NearFarInteractor>(FindObjectsInactive.Include, FindObjectsSortMode.None)
                 .Cast<Component>()
                 .Concat(Object.FindObjectsByType<XRPokeInteractor>(FindObjectsInactive.Include, FindObjectsSortMode.None))
                 .ToList();
-            var onControllers = interactors.Count(c => Under(c, modality.leftController) || Under(c, modality.rightController));
+            bool OnController(Component c) => Under(c, modality.leftController) || Under(c, modality.rightController);
+            bool OnHand(Component c) => Under(c, modality.leftHand) || Under(c, modality.rightHand);
+            var onControllers = interactors.Count(OnController);
+            var onHands = interactors.Count(OnHand);
+            // A hand nested under a controller would make PokeButton ignore every hand press.
+            var onBoth = interactors.Where(c => OnHand(c) && OnController(c)).Select(c => c.name).ToList();
             var unplaced = interactors
-                .Where(c => !Under(c, modality.leftHand) && !Under(c, modality.rightHand)
-                            && !Under(c, modality.leftController) && !Under(c, modality.rightController))
+                .Where(c => !OnHand(c) && !OnController(c))
                 .Select(c => c.name)
                 .ToList();
 
             Assert.That(onControllers, Is.GreaterThan(0), "expected the starter rig's controller interactors");
+            Assert.That(onHands, Is.GreaterThan(0), "expected the hand interactors");
+            Assert.That(onBoth, Is.Empty, string.Join(", ", onBoth));
             Assert.That(unplaced, Is.Empty, string.Join(", ", unplaced));
         }
     }

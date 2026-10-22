@@ -12,7 +12,9 @@ namespace AutismVR.Interaction
     // on Meta VR Glasses that arrives as the hand's NearFarInteractor select. The Quest hand ray is the
     // same interactor, so a far hand-ray pinch on Quest presses too (accepted by the owner, F3). Hands
     // only: interactors under the rig's controllers (as named by its XRInputModalityManager) are
-    // ignored, as are the teleport XRRayInteractor and gaze dwell.
+    // ignored, as are the teleport XRRayInteractor and gaze dwell. The project enables no OpenXR
+    // controller profile, so this guards the XRI rig's controller interactors as defence in depth;
+    // it has not been verified on a device.
     [RequireComponent(typeof(XRSimpleInteractable), typeof(XRPokeFilter))]
     public class PokeButton : MonoBehaviour
     {

@@ -175,9 +175,12 @@ namespace AutismVR.Tests.PlayMode
         public IEnumerator PokeButton_ControllerPokeSelect_DoesNotRaisePressed()
         {
             CreateModalityManager(out _, out var controller);
+            var selects = 0;
+            m_Button.GetComponent<XRSimpleInteractable>().selectEntered.AddListener(_ => selects++);
             yield return SelectFrom<XRPokeInteractor>(controller);
 
-            // A poke select is released the next frame; PokeButton_PokeSelect_RaisesPressed is the control.
+            // A poke select is released the next frame, so count the select instead of checking isSelected.
+            Assert.That(selects, Is.EqualTo(1), "the select must reach the button for this test to mean anything");
             Assert.That(m_Button.PressCount, Is.EqualTo(0));
         }
 

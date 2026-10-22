@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f856184095fb64e5b8fd20337afb801b, type: 3}
+  m_Name: ch46
+  m_EditorClassIdentifier: AutismVR.Runtime::AutismVR.Characters.CharacterProfile
+  Id: ch46
+  DisplayName: Ch46
+  ModelPrefab: {fileID: 5231151789586949465, guid: 7ccbc074c22274f0cab89fe802798fca, type: 3}
+  GreetingClip: {fileID: 8300000, guid: 76a0f4a754662da439ed3fc8255e065c, type: 3}
+  GreetingLine: Hello!
+  Personality: Needs time to process. Overwhelmed by rapid questions, pressure to speak and demands for eye contact.
+  StartingComfort: 0.3
+  GreetingThreshold: 0.8
+  RecoveryPerSecond: 0.015
+  TriggerSensitivities:
+  - TriggerId: rapid_questions
+    Multiplier: 1.5
+  - TriggerId: pressuring_speech
+    Multiplier: 1.4
+  - TriggerId: demanding_eye_contact
+    Multiplier: 1.3
+  ExcludedTriggers: []

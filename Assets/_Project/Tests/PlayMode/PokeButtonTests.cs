@@ -4,6 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Inputs;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
@@ -89,6 +90,104 @@ namespace AutismVR.Tests.PlayMode
 
             Assert.That(m_Button.PressCount, Is.EqualTo(1));
             Assert.That(pressedEvents, Is.EqualTo(1));
+        }
+
+        // On Meta VR Glasses a look-and-pinch reaches the app as the hand's NearFarInteractor select
+        // (Meta XR Simulator spike, F3).
+        [UnityTest]
+        public IEnumerator PokeButton_LookAndPinchSelect_RaisesPressed()
+        {
+            var nearFar = Track(new GameObject("NearFar")).AddComponent<NearFarInteractor>();
+            var interactable = m_Button.GetComponent<XRSimpleInteractable>();
+            yield return null;
+
+            m_Manager.SelectEnterUnconditionally((IXRSelectInteractor)nearFar, interactable);
+            yield return null;
+
+            Assert.That(interactable.isSelected, Is.True);
+            Assert.That(m_Button.PressCount, Is.EqualTo(1));
+        }
+
+        // SelectEnterUnconditionally skips select filters; check the button's XRPokeFilter lets the
+        // look-and-pinch interactor through, so the real path is not blocked.
+        [UnityTest]
+        public IEnumerator PokeButton_PokeFilter_AllowsLookAndPinchInteractor()
+        {
+            var nearFar = Track(new GameObject("NearFar")).AddComponent<NearFarInteractor>();
+            yield return null;
+
+            var filter = (UnityEngine.XR.Interaction.Toolkit.Filtering.IXRSelectFilter)m_Button.GetComponent<UnityEngine.XR.Interaction.Toolkit.Filtering.XRPokeFilter>();
+            Assert.That(filter.Process(nearFar, m_Button.GetComponent<XRSimpleInteractable>()), Is.True);
+        }
+
+        // Owner ruling (F3): Glasses look-and-pinch and the Quest hand ray are the same NearFarInteractor,
+        // so a far hand-ray pinch on Quest presses too. Accepted; this pins it.
+        [UnityTest]
+        public IEnumerator PokeButton_FarHandRayPinch_RaisesPressed()
+        {
+            var nearFar = Track(new GameObject("NearFar")).AddComponent<NearFarInteractor>();
+            nearFar.transform.SetPositionAndRotation(m_Button.transform.position + new Vector3(0f, 0f, -3f), Quaternion.identity);
+            var interactable = m_Button.GetComponent<XRSimpleInteractable>();
+            yield return null;
+
+            m_Manager.SelectEnterUnconditionally((IXRSelectInteractor)nearFar, interactable);
+            yield return null;
+
+            Assert.That(Vector3.Distance(nearFar.transform.position, m_Button.transform.position), Is.GreaterThan(2f));
+            Assert.That(m_Button.PressCount, Is.EqualTo(1));
+        }
+
+        // The rig's modality manager names the hand and controller objects. Kept on an inactive object so it
+        // does not toggle them from (absent) device tracking during the test.
+        XRInputModalityManager CreateModalityManager(out GameObject hand, out GameObject controller)
+        {
+            var managerObject = Track(new GameObject("Modality Manager"));
+            managerObject.SetActive(false);
+            var manager = managerObject.AddComponent<XRInputModalityManager>();
+            hand = Track(new GameObject("Right Hand"));
+            controller = Track(new GameObject("Right Controller"));
+            manager.rightHand = hand;
+            manager.rightController = controller;
+            return manager;
+        }
+
+        IEnumerator SelectFrom<T>(GameObject parent) where T : Component, IXRSelectInteractor
+        {
+            var interactor = Track(new GameObject(typeof(T).Name)).AddComponent<T>();
+            interactor.transform.SetParent(parent.transform, false);
+            yield return null;
+            m_Manager.SelectEnterUnconditionally(interactor, m_Button.GetComponent<XRSimpleInteractable>());
+            yield return null;
+        }
+
+        // Owner ruling (F3): hands only. A controller's NearFarInteractor or poke must not press.
+        [UnityTest]
+        public IEnumerator PokeButton_ControllerNearFarSelect_DoesNotRaisePressed()
+        {
+            CreateModalityManager(out _, out var controller);
+            yield return SelectFrom<NearFarInteractor>(controller);
+
+            Assert.That(m_Button.GetComponent<XRSimpleInteractable>().isSelected, Is.True, "the select must reach the button for this test to mean anything");
+            Assert.That(m_Button.PressCount, Is.EqualTo(0));
+        }
+
+        [UnityTest]
+        public IEnumerator PokeButton_ControllerPokeSelect_DoesNotRaisePressed()
+        {
+            CreateModalityManager(out _, out var controller);
+            yield return SelectFrom<XRPokeInteractor>(controller);
+
+            // A poke select is released the next frame; PokeButton_PokeSelect_RaisesPressed is the control.
+            Assert.That(m_Button.PressCount, Is.EqualTo(0));
+        }
+
+        [UnityTest]
+        public IEnumerator PokeButton_HandNearFarSelectWithModalityManager_RaisesPressed()
+        {
+            CreateModalityManager(out var hand, out _);
+            yield return SelectFrom<NearFarInteractor>(hand);
+
+            Assert.That(m_Button.PressCount, Is.EqualTo(1));
         }
 
         [UnityTest]

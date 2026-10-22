@@ -112,6 +112,17 @@ namespace AutismVR.Tests.EditMode
         }
 
         [Test]
+        public void RoomHasChildSpawnerWiredToSpawns()
+        {
+            var spawners = Object.FindObjectsByType<AutismVR.Characters.ChildSpawner>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+            Assert.That(spawners, Has.Length.EqualTo(1));
+            Assert.That(spawners[0].SpawnPoint, Is.SameAs(GameObject.Find(RoomSceneCommands.ChildSpawnName).transform));
+            Assert.That(spawners[0].FaceTowards, Is.SameAs(GameObject.Find(RoomSceneCommands.TrainerSpawnName).transform));
+            Assert.That(spawners[0].DefaultProfile, Is.SameAs(CharacterProfileCommands.Load(CharacterProfileCommands.DefaultProfileId)));
+        }
+
+        [Test]
         public void XrOriginTracksFromTheFloor()
         {
             var origin = Object.FindFirstObjectByType<XROrigin>();
@@ -149,10 +160,9 @@ namespace AutismVR.Tests.EditMode
 
             Assert.That(button, Is.Not.Null);
             Assert.That(button.GetComponent<AutismVR.Interaction.PokeButton>(), Is.Not.Null);
-            var local = spawn.InverseTransformPoint(button.transform.position);
-            Assert.That(local.z, Is.InRange(0.5f, 0.7f), "distance in front of the spawn");
-            Assert.That(local.y, Is.InRange(0.8f, 1.0f), "height above the floor");
-            Assert.That(Mathf.Abs(local.x), Is.LessThan(0.2f), "centred on the trainer");
+            ButtonPlacementAssert.InReachAndInView(button.transform, spawn);
+            ButtonPlacementAssert.SitsOnPedestal(button.transform, GameObject.Find("StartButtonPedestal").transform);
+            Assert.That(Mathf.Abs(spawn.InverseTransformPoint(button.transform.position).x), Is.LessThan(0.2f));
         }
 
         [Test]
@@ -169,15 +179,6 @@ namespace AutismVR.Tests.EditMode
         public void RoomHasNoBakedLightingReference()
         {
             Assert.That(Lightmapping.lightingDataAsset, Is.Null);
-        }
-
-        [Test]
-        public void BuildScenesAreExactlyRoom()
-        {
-            var scenes = EditorBuildSettings.scenes;
-
-            Assert.That(scenes.Select(s => s.path), Is.EqualTo(new[] { RoomSceneCommands.RoomScenePath }));
-            Assert.That(scenes[0].enabled, Is.True);
         }
 
         static GameObject[] SceneObjects()

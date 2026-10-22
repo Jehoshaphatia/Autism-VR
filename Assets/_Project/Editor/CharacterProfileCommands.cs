@@ -23,7 +23,7 @@ namespace AutismVR.Editor
         struct ProfileSeed
         {
             public string Id, Model, DisplayName, Personality;
-            public float StartingComfort, GreetingThreshold, RecoveryPerSecond;
+            public float StartingComfort, GreetingThreshold, RecoveryPerSecond, Height;
             public (string trigger, float multiplier)[] Sensitivities;
         }
 
@@ -33,21 +33,21 @@ namespace AutismVR.Editor
             {
                 Id = "aj", Model = "Assets/Aj.fbx", DisplayName = "Aj",
                 Personality = "Very sensitive to loud voices and anger. Calms when spoken to quietly and slowly.",
-                StartingComfort = 0.35f, GreetingThreshold = 0.75f, RecoveryPerSecond = 0.02f,
+                StartingComfort = 0.35f, GreetingThreshold = 0.75f, RecoveryPerSecond = 0.02f, Height = 1.25f,
                 Sensitivities = new[] { (TriggerIds.Shouting, 1.5f), (TriggerIds.Anger, 1.3f) },
             },
             new ProfileSeed
             {
                 Id = "ch12", Model = "Assets/Ch12_nonPBR.fbx", DisplayName = "Ch12",
                 Personality = "Needs personal space. Becomes distressed when approached quickly or reached towards.",
-                StartingComfort = 0.4f, GreetingThreshold = 0.75f, RecoveryPerSecond = 0.03f,
+                StartingComfort = 0.4f, GreetingThreshold = 0.75f, RecoveryPerSecond = 0.03f, Height = 1.3f,
                 Sensitivities = new[] { (TriggerIds.ApproachTooClose, 1.5f), (TriggerIds.ReachingOrTouch, 1.6f) },
             },
             new ProfileSeed
             {
                 Id = "ch46", Model = "Assets/Ch46_nonPBR.fbx", DisplayName = "Ch46",
                 Personality = "Needs time to process. Overwhelmed by rapid questions, pressure to speak and demands for eye contact.",
-                StartingComfort = 0.3f, GreetingThreshold = 0.8f, RecoveryPerSecond = 0.015f,
+                StartingComfort = 0.3f, GreetingThreshold = 0.8f, RecoveryPerSecond = 0.015f, Height = 1.2f,
                 Sensitivities = new[]
                 {
                     (TriggerIds.RapidQuestions, 1.5f), (TriggerIds.PressuringSpeech, 1.4f), (TriggerIds.DemandingEyeContact, 1.3f),
@@ -74,7 +74,7 @@ namespace AutismVR.Editor
 
                 profile.Id = seed.Id;
                 profile.DisplayName = seed.DisplayName;
-                profile.ModelPrefab = CreateChildPrefab(seed.Id, seed.Model, controller);
+                profile.ModelPrefab = CreateChildPrefab(seed.Id, seed.Model, controller, seed.Height);
                 profile.GreetingClip = greeting;
                 profile.GreetingLine = "Hello!";
                 profile.Personality = seed.Personality;
@@ -92,11 +92,19 @@ namespace AutismVR.Editor
             return Seeds.Length;
         }
 
-        static GameObject CreateChildPrefab(string id, string modelPath, RuntimeAnimatorController controller)
+        // The Mixamo models are adult-sized, so each prefab is scaled uniformly to a provisional child height.
+        static GameObject CreateChildPrefab(string id, string modelPath, RuntimeAnimatorController controller, float height)
         {
             var instance = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(modelPath));
             try
             {
+                instance.transform.localScale = Vector3.one;
+                var renderers = instance.GetComponentsInChildren<Renderer>();
+                var bounds = renderers[0].bounds;
+                foreach (var renderer in renderers)
+                    bounds.Encapsulate(renderer.bounds);
+                instance.transform.localScale = Vector3.one * (height / bounds.size.y);
+
                 var animator = instance.GetComponent<Animator>() ?? instance.AddComponent<Animator>();
                 animator.runtimeAnimatorController = controller;
                 animator.applyRootMotion = false;

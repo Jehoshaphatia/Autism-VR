@@ -42,6 +42,27 @@ namespace AutismVR.Tests.EditMode
             Assert.That(animator.avatar != null && animator.avatar.isHuman, Is.True);
         }
 
+        // The Mixamo models are adult-sized (1.6-2.0 m); a child-interaction trainer needs child-sized
+        // characters, so each prefab is scaled to a provisional child height.
+        [TestCaseSource(nameof(ProfileIds))]
+        public void ProfileModelIsChildHeight(string id)
+        {
+            var instance = (GameObject)PrefabUtility.InstantiatePrefab(Load(id).ModelPrefab);
+            try
+            {
+                var renderers = instance.GetComponentsInChildren<Renderer>();
+                var bounds = renderers[0].bounds;
+                foreach (var renderer in renderers)
+                    bounds.Encapsulate(renderer.bounds);
+
+                Assert.That(bounds.size.y, Is.InRange(1.0f, 1.4f), $"{id} height");
+            }
+            finally
+            {
+                Object.DestroyImmediate(instance);
+            }
+        }
+
         [TestCaseSource(nameof(ProfileIds))]
         public void ProfileOnlyReferencesKnownTriggers(string id)
         {

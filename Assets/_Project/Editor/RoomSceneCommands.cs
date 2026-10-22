@@ -214,6 +214,29 @@ namespace AutismVR.Editor
             return spawner.name;
         }
 
+        // Adds the ComfortDriver that feeds the trainee's head and hand fingertips to the spawned child.
+        [CliCommand("autismvr_add_comfort_driver", "Add the ComfortDriver to Room, wired to the spawner, headset camera and hand pokes")]
+        public static string AddComfortDriver()
+        {
+            var scene = EditorSceneManager.OpenScene(RoomScenePath, OpenSceneMode.Single);
+            var spawner = UnityEngine.Object.FindFirstObjectByType<AutismVR.Characters.ChildSpawner>()
+                          ?? throw new InvalidOperationException("Room has no ChildSpawner; run autismvr_add_child_spawner first");
+            var head = UnityEngine.Object.FindFirstObjectByType<Unity.XR.CoreUtils.XROrigin>().Camera.transform;
+            var modality = UnityEngine.Object.FindFirstObjectByType<UnityEngine.XR.Interaction.Toolkit.Inputs.XRInputModalityManager>(FindObjectsInactive.Include);
+            var hands = new[] { modality.leftHand, modality.rightHand }
+                .Select(hand => hand.GetComponentInChildren<UnityEngine.XR.Interaction.Toolkit.Interactors.XRPokeInteractor>(true).transform)
+                .ToArray();
+
+            var driver = UnityEngine.Object.FindFirstObjectByType<AutismVR.Comfort.ComfortDriver>()
+                         ?? new GameObject("ComfortDriver").AddComponent<AutismVR.Comfort.ComfortDriver>();
+            driver.Configure(spawner, head, hands);
+            EditorUtility.SetDirty(driver);
+
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            return driver.name;
+        }
+
         // Button centre height and distance ahead of the trainer: about 33 degrees below a 1.6 m eye
         // line, so it is in view and within arm's reach.
         public const float ButtonCentreHeight = 1.18f;

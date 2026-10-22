@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 using UnityEngine.XR.Interaction.Toolkit.Filtering;
+using UnityEngine.XR.Interaction.Toolkit.Inputs;
 
 namespace AutismVR.Tests.EditMode
 {
@@ -186,6 +187,26 @@ namespace AutismVR.Tests.EditMode
             return EditorSceneManager.GetActiveScene().GetRootGameObjects()
                 .SelectMany(root => root.GetComponentsInChildren<Transform>(true))
                 .Select(t => t.gameObject).ToArray();
+        }
+
+        [Test]
+        public void RoomHasComfortDriverWiredToRig()
+        {
+            var drivers = Object.FindObjectsByType<AutismVR.Comfort.ComfortDriver>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            Assert.That(drivers, Has.Length.EqualTo(1));
+            var driver = drivers[0];
+
+            Assert.That(driver.Spawner, Is.EqualTo(Object.FindFirstObjectByType<AutismVR.Characters.ChildSpawner>()));
+            Assert.That(driver.Spawner, Is.Not.Null);
+            Assert.That(driver.Head, Is.EqualTo(Object.FindFirstObjectByType<XROrigin>().Camera.transform));
+
+            var modality = Object.FindFirstObjectByType<XRInputModalityManager>(FindObjectsInactive.Include);
+            var handPokes = Object.FindObjectsByType<XRPokeInteractor>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+                .Where(poke => poke.transform.IsChildOf(modality.leftHand.transform) || poke.transform.IsChildOf(modality.rightHand.transform))
+                .Select(poke => poke.transform)
+                .ToList();
+            Assert.That(handPokes, Has.Count.EqualTo(2));
+            Assert.That(driver.Hands, Is.EquivalentTo(handPokes));
         }
     }
 }

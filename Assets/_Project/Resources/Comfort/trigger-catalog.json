@@ -1,0 +1,223 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "kind": "trigger",
+      "reaction": "Withdrawn",
+      "enabled": true,
+      "provisional": true,
+      "id": "shouting",
+      "name": "Shouting",
+      "description": "The adult raises their voice to a shout or yells at the child.",
+      "channels": [
+        "loudness",
+        "words"
+      ],
+      "effect": -0.15,
+      "threshold_dbfs": -15,
+      "hold_seconds": 0.3,
+      "refractory_seconds": 2
+    },
+    {
+      "kind": "trigger",
+      "reaction": "LooksAway",
+      "enabled": true,
+      "provisional": true,
+      "id": "demanding_eye_contact",
+      "name": "Demanding eye contact",
+      "description": "The adult tells or pressures the child to look at them, for example \"look at me\".",
+      "channels": [
+        "words"
+      ],
+      "effect": -0.12
+    },
+    {
+      "kind": "trigger",
+      "reaction": "LooksAway",
+      "enabled": true,
+      "provisional": true,
+      "id": "staring",
+      "name": "Staring",
+      "description": "The adult keeps looking intently at the child's face for several seconds without a break.",
+      "channels": [
+        "gaze"
+      ],
+      "effect": -0.02,
+      "hold_seconds": 5,
+      "cone_degrees": 10,
+      "repeat_seconds": 5
+    },
+    {
+      "kind": "trigger",
+      "reaction": "",
+      "enabled": true,
+      "provisional": true,
+      "id": "rapid_questions",
+      "name": "Rapid-fire questions",
+      "description": "The adult asks several questions in quick succession without giving the child time to process or answer.",
+      "channels": [
+        "words"
+      ],
+      "effect": -0.08
+    },
+    {
+      "kind": "trigger",
+      "reaction": "",
+      "enabled": true,
+      "provisional": true,
+      "id": "multi_step_instructions",
+      "name": "Long multi-step instructions",
+      "description": "The adult gives a long instruction with several steps at once.",
+      "channels": [
+        "words"
+      ],
+      "effect": -0.06
+    },
+    {
+      "kind": "trigger",
+      "reaction": "",
+      "enabled": true,
+      "provisional": true,
+      "id": "sarcasm",
+      "name": "Sarcasm or vague language",
+      "description": "The adult uses sarcasm, idioms or vague language the child may take literally.",
+      "channels": [
+        "words"
+      ],
+      "effect": -0.05
+    },
+    {
+      "kind": "trigger",
+      "reaction": "",
+      "enabled": true,
+      "provisional": true,
+      "id": "anger",
+      "name": "Anger or impatience",
+      "description": "The adult sounds angry, irritated or impatient with the child.",
+      "channels": [
+        "words",
+        "loudness"
+      ],
+      "effect": -0.12
+    },
+    {
+      "kind": "trigger",
+      "reaction": "",
+      "enabled": true,
+      "provisional": true,
+      "id": "pressuring_speech",
+      "name": "Pressuring speech",
+      "description": "The adult pushes the child to speak or respond, for example \"say hello!\".",
+      "channels": [
+        "words"
+      ],
+      "effect": -0.1
+    },
+    {
+      "kind": "trigger",
+      "reaction": "LooksAway",
+      "enabled": true,
+      "provisional": true,
+      "id": "approach_too_close",
+      "name": "Moving too close or too fast",
+      "description": "The adult moves into the child's personal space or approaches quickly.",
+      "channels": [
+        "proximity"
+      ],
+      "effect": -0.12,
+      "distance_m": 0.8,
+      "rearm_distance_m": 1.0,
+      "speed_mps": 1.0,
+      "range_m": 2.0,
+      "refractory_seconds": 2
+    },
+    {
+      "kind": "trigger",
+      "reaction": "Withdrawn",
+      "enabled": true,
+      "provisional": true,
+      "id": "reaching_or_touch",
+      "name": "Reaching toward or touching",
+      "description": "The adult reaches toward the child, makes a sudden movement at them, or touches them.",
+      "channels": [
+        "hands"
+      ],
+      "effect": -0.15,
+      "distance_m": 0.35,
+      "speed_mps": 1.5,
+      "range_m": 1.0,
+      "refractory_seconds": 2
+    },
+    {
+      "kind": "trigger",
+      "reaction": "",
+      "enabled": true,
+      "provisional": true,
+      "id": "demands_during_meltdown",
+      "name": "Demands during a meltdown",
+      "description": "The adult asks questions or gives instructions while the child is in a meltdown.",
+      "channels": [
+        "words"
+      ],
+      "effect": -0.1
+    },
+    {
+      "kind": "calming",
+      "reaction": "",
+      "enabled": true,
+      "provisional": true,
+      "id": "calm_quiet_voice",
+      "name": "Calm, quiet voice",
+      "description": "The adult speaks calmly and quietly in short, simple sentences.",
+      "channels": [
+        "words"
+      ],
+      "effect": 0.03
+    },
+    {
+      "kind": "calming",
+      "reaction": "",
+      "enabled": true,
+      "provisional": true,
+      "id": "waits_quietly",
+      "name": "Waiting quietly",
+      "description": "The adult stays quiet and gives the child time.",
+      "channels": [
+        "loudness"
+      ],
+      "effect": 0.02,
+      "threshold_dbfs": -40,
+      "hold_seconds": 5,
+      "repeat_seconds": 5
+    },
+    {
+      "kind": "calming",
+      "reaction": "",
+      "enabled": true,
+      "provisional": true,
+      "id": "lets_child_look_away",
+      "name": "Letting the child look away",
+      "description": "The adult lets the child look away without remarking on it or asking for eye contact.",
+      "channels": [
+        "words"
+      ],
+      "effect": 0.05
+    },
+    {
+      "kind": "calming",
+      "reaction": "",
+      "enabled": true,
+      "provisional": true,
+      "id": "gives_space",
+      "name": "Giving space",
+      "description": "The adult keeps a comfortable distance from the child.",
+      "channels": [
+        "proximity"
+      ],
+      "effect": 0.04,
+      "distance_m": 1.5,
+      "hold_seconds": 5,
+      "repeat_seconds": 5
+    }
+  ]
+}

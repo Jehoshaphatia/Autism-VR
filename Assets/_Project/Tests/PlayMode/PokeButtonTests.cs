@@ -119,6 +119,23 @@ namespace AutismVR.Tests.PlayMode
             Assert.That(filter.Process(nearFar, m_Button.GetComponent<XRSimpleInteractable>()), Is.True);
         }
 
+        // Owner ruling (F3): Glasses look-and-pinch and the Quest hand ray are the same NearFarInteractor,
+        // so a far hand-ray pinch on Quest presses too. Accepted; this pins it.
+        [UnityTest]
+        public IEnumerator PokeButton_FarHandRayPinch_RaisesPressed()
+        {
+            var nearFar = Track(new GameObject("NearFar")).AddComponent<NearFarInteractor>();
+            nearFar.transform.SetPositionAndRotation(m_Button.transform.position + new Vector3(0f, 0f, -3f), Quaternion.identity);
+            var interactable = m_Button.GetComponent<XRSimpleInteractable>();
+            yield return null;
+
+            m_Manager.SelectEnterUnconditionally((IXRSelectInteractor)nearFar, interactable);
+            yield return null;
+
+            Assert.That(Vector3.Distance(nearFar.transform.position, m_Button.transform.position), Is.GreaterThan(2f));
+            Assert.That(m_Button.PressCount, Is.EqualTo(1));
+        }
+
         [UnityTest]
         public IEnumerator PokeButton_RaySelect_DoesNotRaisePressed()
         {

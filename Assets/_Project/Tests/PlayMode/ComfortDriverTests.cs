@@ -65,7 +65,7 @@ namespace AutismVR.Tests.PlayMode
             var childHead = m_Spawner.Spawned.GetComponent<Animator>().GetBoneTransform(HumanBodyBones.Head);
 
             Time.timeScale = 4f;
-            for (var elapsed = 0f; elapsed < 5.6f; elapsed += Time.deltaTime)
+            for (var elapsed = 0f; elapsed < 10.6f; elapsed += Time.deltaTime)
             {
                 m_Head.LookAt(childHead);
                 yield return null;

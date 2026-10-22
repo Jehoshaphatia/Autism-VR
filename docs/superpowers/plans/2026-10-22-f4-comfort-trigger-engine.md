@@ -54,7 +54,7 @@ Also the roadmap F4 row.
 |---|---|---|---|
 | `shouting` | loudness, words | −0.15 | Withdrawn |
 | `demanding_eye_contact` | words | −0.12 | LooksAway |
-| `staring` | gaze | −0.04 per second beyond threshold | LooksAway |
+| `staring` | gaze | −0.02 per 5 s beyond threshold *(final review: was −0.04 per second)* | LooksAway |
 | `rapid_questions` | words | −0.08 | — |
 | `multi_step_instructions` | words | −0.06 | — |
 | `sarcasm` | words | −0.05 | — |
@@ -79,7 +79,7 @@ Also the roadmap F4 row.
 |---|---|
 | Shouting | above −15 dBFS for 0.3 s; refractory 2 s |
 | Waiting quietly | below −40 dBFS for 5 s; repeats every 5 s |
-| Staring | within a 15° cone of the child's head for 4 s, then one hit per further second; resets when the gaze leaves the cone |
+| Staring | within a 10° cone of the child's head for 5 s, then one hit per further 5 s; resets when the gaze leaves the cone *(final review: was 15° / 4 s / every second)* |
 | Too close | under 0.8 m, re-armed after going beyond 1.0 m; or approaching faster than 1.0 m/s within 2 m; refractory 2 s |
 | Giving space | at least 1.5 m for 5 s; repeats every 5 s |
 | Reaching or touch | a hand within 0.35 m of the child's head or chest, or moving toward the child faster than 1.5 m/s within 1.0 m; refractory 2 s |

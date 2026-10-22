@@ -16,8 +16,9 @@ namespace AutismVR.Comfort
 
         public LoudnessDetector(TriggerDefinition shouting, TriggerDefinition waitsQuietly)
         {
-            m_Shouting = shouting;
-            m_WaitsQuietly = waitsQuietly;
+            // A row whose numbers are missing (parsed as 0) would fire every frame, so it disables that output.
+            m_Shouting = shouting != null && shouting.HoldSeconds >= 0f && shouting.RefractorySeconds > 0f ? shouting : null;
+            m_WaitsQuietly = waitsQuietly != null && waitsQuietly.HoldSeconds > 0f && waitsQuietly.RepeatSeconds > 0f ? waitsQuietly : null;
         }
 
         public void Sample(float dbfs, float dt, List<TriggerHit> hits)

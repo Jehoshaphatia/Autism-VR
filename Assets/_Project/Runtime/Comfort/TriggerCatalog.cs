@@ -34,7 +34,8 @@ namespace AutismVR.Comfort
         }
 
         // False when the JSON is unreadable or has no usable entries. Entries with an unknown kind, channel or
-        // reaction, or a repeated id, are skipped so one bad row does not discard the rest.
+        // reaction, an effect of the wrong sign, or a repeated id, are skipped so one bad row does not discard
+        // the rest. Channel parameters are checked by the detector that uses them.
         public static bool TryParse(string json, out TriggerCatalog catalog)
         {
             catalog = null;
@@ -120,6 +121,10 @@ namespace AutismVR.Comfort
                 channels |= channel;
             }
             if (channels == Channel.None)
+                return false;
+
+            // A trigger must lower comfort and a calming behaviour raise it.
+            if (kind == TriggerKind.Trigger ? row.effect >= 0f : row.effect <= 0f)
                 return false;
 
             ChildReaction? reaction = null;

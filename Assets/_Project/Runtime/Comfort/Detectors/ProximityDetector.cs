@@ -19,8 +19,20 @@ namespace AutismVR.Comfort
 
         public ProximityDetector(TriggerDefinition approach, TriggerDefinition givesSpace)
         {
-            m_Approach = approach;
-            m_GivesSpace = givesSpace;
+            // A row whose numbers are missing (parsed as 0) would fire every frame, so it disables that output.
+            m_Approach = approach != null && approach.DistanceMeters > 0f && approach.RearmDistanceMeters >= approach.DistanceMeters
+                         && approach.RefractorySeconds > 0f && approach.SpeedMetersPerSecond > 0f && approach.RangeMeters > 0f
+                ? approach
+                : null;
+            m_GivesSpace = givesSpace != null && givesSpace.DistanceMeters > 0f && givesSpace.HoldSeconds > 0f && givesSpace.RepeatSeconds > 0f
+                ? givesSpace
+                : null;
+        }
+
+        // Forget the last distance, so the next sample has no speed (after a frame too long to measure it).
+        public void ResetMotion()
+        {
+            m_LastDistance = null;
         }
 
         public void Sample(Vector3 headPosition, Vector3 childPosition, float dt, List<TriggerHit> hits)

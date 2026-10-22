@@ -16,7 +16,8 @@ namespace AutismVR.Comfort
 
         public StareDetector(TriggerDefinition staring)
         {
-            m_Staring = staring;
+            // A row whose numbers are missing (parsed as 0) would fire every frame, so it disables the detector.
+            m_Staring = staring != null && staring.HoldSeconds >= 0f && staring.RepeatSeconds > 0f && staring.ConeDegrees > 0f ? staring : null;
             Reset();
         }
 

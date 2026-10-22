@@ -44,3 +44,9 @@ faces the child, as people do when talking to someone, counts as staring after 4
 melts down in about 14 s from that alone. The simulated head is perfectly still, which exaggerates
 this, but the problem is real. The staring values are provisional catalog rows (`hold_seconds` 4,
 `cone_degrees` 15) and need tuning on a headset before a clinician review.
+
+**Retuned after the final review.** Staring is now 5 s inside a 10° cone, then −0.02 every 5 s.
+The repeat (5 s) is longer than the 3 s quiet window, so a meltdown can recover while the trainee
+keeps facing the child. Facing the child for a minute at 1.2 m no longer causes a meltdown
+(`Engine_FacingChildAtConversationDistance_NoMeltdownInAMinute`). The run above used the old values.
+Head-direction staring is still only a proxy for eye contact; F8 and a clinician must tune it.

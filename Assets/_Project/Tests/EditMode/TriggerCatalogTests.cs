@@ -25,7 +25,7 @@ namespace AutismVR.Tests.EditMode
         // The provisional table in the F4 plan's Global Constraints.
         [TestCase(TriggerIds.Shouting, Channel.Loudness | Channel.Words, -0.15f, "Withdrawn")]
         [TestCase(TriggerIds.DemandingEyeContact, Channel.Words, -0.12f, "LooksAway")]
-        [TestCase(TriggerIds.Staring, Channel.Gaze, -0.04f, "LooksAway")]
+        [TestCase(TriggerIds.Staring, Channel.Gaze, -0.02f, "LooksAway")]
         [TestCase(TriggerIds.RapidQuestions, Channel.Words, -0.08f, "")]
         [TestCase(TriggerIds.MultiStepInstructions, Channel.Words, -0.06f, "")]
         [TestCase(TriggerIds.Sarcasm, Channel.Words, -0.05f, "")]
@@ -59,7 +59,7 @@ namespace AutismVR.Tests.EditMode
             Assert.That((quiet.ThresholdDbfs, quiet.HoldSeconds, quiet.RepeatSeconds), Is.EqualTo((-40f, 5f, 5f)));
 
             var staring = Default.Find(TriggerIds.Staring);
-            Assert.That((staring.ConeDegrees, staring.HoldSeconds, staring.RepeatSeconds), Is.EqualTo((15f, 4f, 1f)));
+            Assert.That((staring.ConeDegrees, staring.HoldSeconds, staring.RepeatSeconds), Is.EqualTo((10f, 5f, 5f)));
 
             var close = Default.Find(TriggerIds.ApproachTooClose);
             Assert.That((close.DistanceMeters, close.RearmDistanceMeters, close.SpeedMetersPerSecond, close.RangeMeters, close.RefractorySeconds),
@@ -150,6 +150,19 @@ namespace AutismVR.Tests.EditMode
             Assert.That(catalog.IsActive("shouting"), Is.False);
             Assert.That(catalog.IsActive("anger"), Is.True);
             Assert.That(catalog.IsActive("missing"), Is.False);
+        }
+
+        [Test]
+        public void TryParse_WrongSignEffect_SkipsEntry()
+        {
+            const string json = "{\"version\":1,\"entries\":[" +
+                "{\"id\":\"a\",\"name\":\"A\",\"description\":\"d\",\"kind\":\"trigger\",\"channels\":[\"words\"],\"effect\":0.1,\"enabled\":true}," +
+                "{\"id\":\"b\",\"name\":\"B\",\"description\":\"d\",\"kind\":\"calming\",\"channels\":[\"words\"],\"effect\":-0.1,\"enabled\":true}," +
+                "{\"id\":\"c\",\"name\":\"C\",\"description\":\"d\",\"kind\":\"trigger\",\"channels\":[\"words\"],\"effect\":0,\"enabled\":true}," +
+                "{\"id\":\"d\",\"name\":\"D\",\"description\":\"d\",\"kind\":\"calming\",\"channels\":[\"words\"],\"effect\":0.1,\"enabled\":true}]}";
+
+            Assert.That(TriggerCatalog.TryParse(json, out var catalog), Is.True);
+            Assert.That(catalog.Entries.Select(e => e.Id), Is.EqualTo(new[] { "d" }));
         }
     }
 }

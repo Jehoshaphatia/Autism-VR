@@ -77,7 +77,7 @@ namespace AutismVR.Tests.EditMode
         {
             var engine = new ComfortEngine(Profile(start: 0.5f), TriggerCatalog.LoadDefault());
 
-            Run(engine, Frame(1.2f, true, Speech), 6f);
+            Run(engine, Frame(1.2f, true, Speech), 15.05f);
 
             Assert.That(engine.Model.Comfort, Is.LessThan(0.5f));
             Assert.That(engine.Reactions.Current, Is.EqualTo(ChildReaction.LooksAway));
@@ -165,6 +165,75 @@ namespace AutismVR.Tests.EditMode
 
             Assert.That(engine.Log.Events, Is.Empty);
             Assert.That(engine.Model.Comfort, Is.EqualTo(0.5f));
+        }
+
+        // On Quest staring is judged by head direction, so a trainee who simply faces the child while
+        // talking must not cause a meltdown within a normal exchange.
+        [Test]
+        public void Engine_FacingChildAtConversationDistance_NoMeltdownInAMinute()
+        {
+            var engine = new ComfortEngine(Profile(start: 0.35f), TriggerCatalog.LoadDefault());
+
+            Run(engine, Frame(1.2f, true, Speech), 60f);
+
+            Assert.That(engine.Log.MeltdownHappened, Is.False);
+            Assert.That(engine.Log.Events.Count(e => e.TriggerId == TriggerIds.Staring), Is.GreaterThan(0), "staring is still noticed");
+        }
+
+        [Test]
+        public void Engine_MeltdownRecoversWhileTrainerFacesChild()
+        {
+            var engine = new ComfortEngine(Profile(start: 0.05f, recovery: 0.02f), TriggerCatalog.LoadDefault());
+            Assert.That(engine.Model.InMeltdown, Is.True);
+
+            Assert.That(RunUntil(engine, Frame(1.2f, true, Speech), 120f, () => engine.Log.Deescalated), Is.True);
+        }
+
+        // A frame longer than MaxDeltaTime must not turn ordinary movement into a speed trigger.
+        [Test]
+        public void Engine_HitchWhileWalking_NoFalseApproach()
+        {
+            var engine = new ComfortEngine(Profile(start: 0.5f), TriggerCatalog.LoadDefault());
+            for (var d = 2.5f; d > 1.9f; d -= 0.06f)
+                engine.Step(Frame(d, false, Speech), 0.1f);
+
+            engine.Step(Frame(1.6f, false, Speech), 0.5f);
+            engine.Step(Frame(1.55f, false, Speech), 0.1f);
+
+            Assert.That(engine.Log.Events.Any(e => e.TriggerId == TriggerIds.ApproachTooClose), Is.False);
+        }
+
+        [Test]
+        public void Engine_HitchWhileGesturing_NoFalseReach()
+        {
+            var engine = new ComfortEngine(Profile(start: 0.5f), TriggerCatalog.LoadDefault());
+            var frame = Frame(1.2f, false, Speech);
+            frame.Hands = new List<Vector3> { ChildChest + new Vector3(0f, 0f, 0.95f) };
+            engine.Step(frame, 0.1f);
+
+            frame.Hands = new List<Vector3> { ChildChest + new Vector3(0f, 0f, 0.55f) };
+            engine.Step(frame, 0.5f);
+
+            Assert.That(engine.Log.Events.Any(e => e.TriggerId == TriggerIds.ReachingOrTouch), Is.False);
+        }
+
+        // A cached or edited catalog row with missing numbers parses with zeros; it must not fire every frame.
+        [Test]
+        public void Engine_UnusableParameterRows_DoNotFireEveryFrame()
+        {
+            const string json = "{\"version\":1,\"entries\":[" +
+                "{\"id\":\"staring\",\"name\":\"S\",\"description\":\"d\",\"kind\":\"trigger\",\"channels\":[\"gaze\"],\"effect\":-0.02,\"enabled\":true,\"hold_seconds\":5,\"cone_degrees\":10}," +
+                "{\"id\":\"shouting\",\"name\":\"S\",\"description\":\"d\",\"kind\":\"trigger\",\"channels\":[\"loudness\"],\"effect\":-0.15,\"enabled\":true,\"threshold_dbfs\":-15}," +
+                "{\"id\":\"gives_space\",\"name\":\"G\",\"description\":\"d\",\"kind\":\"calming\",\"channels\":[\"proximity\"],\"effect\":0.04,\"enabled\":true,\"distance_m\":1.5}," +
+                "{\"id\":\"waits_quietly\",\"name\":\"W\",\"description\":\"d\",\"kind\":\"calming\",\"channels\":[\"loudness\"],\"effect\":0.02,\"enabled\":true,\"threshold_dbfs\":-40}]}";
+            Assert.That(TriggerCatalog.TryParse(json, out var catalog), Is.True);
+            var engine = new ComfortEngine(Profile(start: 0.5f, threshold: 1f), catalog);
+
+            Run(engine, Frame(2f, true, -5f), 10f);
+            Run(engine, Frame(2f, true, -50f), 10f);
+
+            Assert.That(engine.Log.Events, Is.Empty);
+            Assert.That(engine.Report(TriggerIds.Shouting, Channel.Words), Is.True, "the row still works for words triggers");
         }
     }
 }

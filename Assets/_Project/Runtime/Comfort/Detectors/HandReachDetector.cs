@@ -15,7 +15,17 @@ namespace AutismVR.Comfort
 
         public HandReachDetector(TriggerDefinition reach)
         {
-            m_Reach = reach;
+            // A row whose numbers are missing (parsed as 0) would fire every frame, so it disables the detector.
+            m_Reach = reach != null && reach.DistanceMeters > 0f && reach.RefractorySeconds > 0f
+                      && reach.SpeedMetersPerSecond > 0f && reach.RangeMeters > 0f
+                ? reach
+                : null;
+        }
+
+        // Forget the last hand distances, so the next sample has no speed (after a frame too long to measure it).
+        public void ResetMotion()
+        {
+            m_LastChestDistance.Clear();
         }
 
         public void Sample(IReadOnlyList<Vector3> hands, Vector3 childHead, Vector3 childChest, float dt, List<TriggerHit> hits)

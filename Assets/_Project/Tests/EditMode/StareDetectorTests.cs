@@ -35,11 +35,11 @@ namespace AutismVR.Tests.EditMode
         }
 
         [Test]
-        public void Stare_SixSeconds_TwoHits()
+        public void Stare_TwentySeconds_ThreeHits()
         {
-            var hits = Look(Detector(), AtChild, 6f);
+            var hits = Look(Detector(), AtChild, 20f);
 
-            Assert.That(hits.Count, Is.EqualTo(2), "one hit per second beyond the 4 s threshold");
+            Assert.That(hits.Count, Is.EqualTo(3), "after the 5 s threshold, one hit per further 5 s: at 10, 15 and 20 s");
             Assert.That(hits[0].TriggerId, Is.EqualTo(TriggerIds.Staring));
             Assert.That(hits[0].Channel, Is.EqualTo(Channel.Gaze));
         }
@@ -48,19 +48,19 @@ namespace AutismVR.Tests.EditMode
         public void Stare_LookAwayResetsTimer()
         {
             var detector = Detector();
-            var hits = Look(detector, AtChild, 3.5f);
+            var hits = Look(detector, AtChild, 9f);
             Look(detector, Away, 0.5f, hits);
-            Look(detector, AtChild, 3.5f, hits);
+            Look(detector, AtChild, 9f, hits);
 
             Assert.That(hits, Is.Empty);
         }
 
         [Test]
-        public void Stare_OutsideCone_NoHit()
+        public void Stare_OutsideTenDegreeCone_NoHit()
         {
-            var thirtyDegreesOff = Quaternion.AngleAxis(30f, Vector3.up) * AtChild;
+            var fifteenDegreesOff = Quaternion.AngleAxis(15f, Vector3.up) * AtChild;
 
-            Assert.That(Look(Detector(), thirtyDegreesOff, 10f), Is.Empty);
+            Assert.That(Look(Detector(), fifteenDegreesOff, 30f), Is.Empty);
         }
 
         [Test]

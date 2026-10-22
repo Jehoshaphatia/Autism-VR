@@ -22,11 +22,11 @@ Start 0.35, greets at 0.75, recovers 0.020/s in a meltdown.
 | 2 | shouting close | 0.00 | Tantrum |  |
 | 3 | shouting close | 0.00 | Tantrum | shouting |
 | 4 | shouting close | 0.00 | Tantrum |  |
-| 5 | shouting close | 0.00 | Tantrum | shouting, staring |
-| 6 | shouting close | 0.00 | Tantrum | staring |
-| 7 | shouting close | 0.00 | Tantrum | shouting, staring |
-| 8 | shouting close | 0.00 | Tantrum | staring |
-| 9 | shouting close | 0.00 | Tantrum | shouting, staring |
+| 5 | shouting close | 0.00 | Tantrum | shouting |
+| 6 | shouting close | 0.00 | Tantrum |  |
+| 7 | shouting close | 0.00 | Tantrum | shouting |
+| 8 | shouting close | 0.00 | Tantrum |  |
+| 9 | shouting close | 0.00 | Tantrum | shouting |
 | 10 | shouting close | 0.00 | Tantrum | staring |
 | 11 | quiet, 2 m | 0.00 | Tantrum |  |
 | 12 | quiet, 2 m | 0.00 | Tantrum |  |
@@ -80,7 +80,7 @@ Start 0.35, greets at 0.75, recovers 0.020/s in a meltdown.
 | 60 | quiet, 2 m | 0.78 | Greeting | waits_quietly, gives_space |
 
 Outcome: greeted yes at 60 s; meltdown yes; de-escalated yes.
-Triggers hit: approach_too_close ×1, shouting ×5, staring ×6.
+Triggers hit: approach_too_close ×1, shouting ×5, staring ×1.
 
 ## Ch12 (`ch12`): shouting and staring at 0.5 m for 10 s, then quiet at 2 m
 
@@ -92,11 +92,11 @@ Start 0.40, greets at 0.75, recovers 0.030/s in a meltdown.
 | 2 | shouting close | 0.07 | Tantrum |  |
 | 3 | shouting close | 0.00 | Tantrum | shouting |
 | 4 | shouting close | 0.00 | Tantrum |  |
-| 5 | shouting close | 0.00 | Tantrum | shouting, staring |
-| 6 | shouting close | 0.00 | Tantrum | staring |
-| 7 | shouting close | 0.00 | Tantrum | shouting, staring |
-| 8 | shouting close | 0.00 | Tantrum | staring |
-| 9 | shouting close | 0.00 | Tantrum | shouting, staring |
+| 5 | shouting close | 0.00 | Tantrum | shouting |
+| 6 | shouting close | 0.00 | Tantrum |  |
+| 7 | shouting close | 0.00 | Tantrum | shouting |
+| 8 | shouting close | 0.00 | Tantrum |  |
+| 9 | shouting close | 0.00 | Tantrum | shouting |
 | 10 | shouting close | 0.00 | Tantrum | staring |
 | 11 | quiet, 2 m | 0.00 | Tantrum |  |
 | 12 | quiet, 2 m | 0.00 | Tantrum |  |
@@ -150,7 +150,7 @@ Start 0.40, greets at 0.75, recovers 0.030/s in a meltdown.
 | 60 | quiet, 2 m | 0.77 | Greeting | waits_quietly |
 
 Outcome: greeted yes at 60 s; meltdown yes; de-escalated yes.
-Triggers hit: approach_too_close ×1, shouting ×5, staring ×6.
+Triggers hit: approach_too_close ×1, shouting ×5, staring ×1.
 
 ## Ch46 (`ch46`): shouting and staring at 0.5 m for 10 s, then quiet at 2 m
 
@@ -162,11 +162,11 @@ Start 0.30, greets at 0.80, recovers 0.015/s in a meltdown.
 | 2 | shouting close | 0.03 | Tantrum |  |
 | 3 | shouting close | 0.00 | Tantrum | shouting |
 | 4 | shouting close | 0.00 | Tantrum |  |
-| 5 | shouting close | 0.00 | Tantrum | shouting, staring |
-| 6 | shouting close | 0.00 | Tantrum | staring |
-| 7 | shouting close | 0.00 | Tantrum | shouting, staring |
-| 8 | shouting close | 0.00 | Tantrum | staring |
-| 9 | shouting close | 0.00 | Tantrum | shouting, staring |
+| 5 | shouting close | 0.00 | Tantrum | shouting |
+| 6 | shouting close | 0.00 | Tantrum |  |
+| 7 | shouting close | 0.00 | Tantrum | shouting |
+| 8 | shouting close | 0.00 | Tantrum |  |
+| 9 | shouting close | 0.00 | Tantrum | shouting |
 | 10 | shouting close | 0.00 | Tantrum | staring |
 | 11 | quiet, 2 m | 0.00 | Tantrum |  |
 | 12 | quiet, 2 m | 0.00 | Tantrum |  |
@@ -225,4 +225,4 @@ Start 0.30, greets at 0.80, recovers 0.015/s in a meltdown.
 | 65 | quiet, 2 m | 0.80 | Greeting | waits_quietly |
 
 Outcome: greeted yes at 65 s; meltdown yes; de-escalated yes.
-Triggers hit: approach_too_close ×1, shouting ×5, staring ×6.
+Triggers hit: approach_too_close ×1, shouting ×5, staring ×1.

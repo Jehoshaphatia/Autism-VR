@@ -42,10 +42,10 @@
       "channels": [
         "gaze"
       ],
-      "effect": -0.04,
-      "hold_seconds": 4,
-      "cone_degrees": 15,
-      "repeat_seconds": 1
+      "effect": -0.02,
+      "hold_seconds": 5,
+      "cone_degrees": 10,
+      "repeat_seconds": 5
     },
     {
       "kind": "trigger",

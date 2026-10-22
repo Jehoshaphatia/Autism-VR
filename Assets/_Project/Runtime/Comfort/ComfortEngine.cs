@@ -33,6 +33,12 @@ namespace AutismVR.Comfort
 
         public ChildReaction Step(in SensorFrame frame, float dt)
         {
+            // After a hitch the distance moved spans more time than the clamped step, so speeds would read high.
+            if (dt > ComfortRules.MaxDeltaTime)
+            {
+                m_Proximity.ResetMotion();
+                m_Hands.ResetMotion();
+            }
             dt = Mathf.Clamp(dt, 0f, ComfortRules.MaxDeltaTime);
             Time += dt;
 

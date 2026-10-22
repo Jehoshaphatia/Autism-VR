@@ -91,6 +91,22 @@ namespace AutismVR.Tests.PlayMode
             Assert.That(pressedEvents, Is.EqualTo(1));
         }
 
+        // On Meta VR Glasses a look-and-pinch reaches the app as the hand's NearFarInteractor select
+        // (Meta XR Simulator spike, F3).
+        [UnityTest]
+        public IEnumerator PokeButton_LookAndPinchSelect_RaisesPressed()
+        {
+            var nearFar = Track(new GameObject("NearFar")).AddComponent<NearFarInteractor>();
+            var interactable = m_Button.GetComponent<XRSimpleInteractable>();
+            yield return null;
+
+            m_Manager.SelectEnterUnconditionally((IXRSelectInteractor)nearFar, interactable);
+            yield return null;
+
+            Assert.That(interactable.isSelected, Is.True);
+            Assert.That(m_Button.PressCount, Is.EqualTo(1));
+        }
+
         [UnityTest]
         public IEnumerator PokeButton_RaySelect_DoesNotRaisePressed()
         {

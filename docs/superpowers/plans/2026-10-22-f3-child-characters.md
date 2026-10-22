@@ -104,8 +104,10 @@
 > the session is gaze-driven" could not be implemented. `PokeButton` instead accepts every
 > `NearFarInteractor` select, so on Quest a far hand-ray pinch also presses buttons. The owner
 > accepted this; `PokeButton_FarHandRayPinch_RaisesPressed` pins it. `PokeButton_RaySelect_DoesNotRaisePressed` pins that the teleport
-> `XRRayInteractor` does not press. A controller's ray is also a `NearFarInteractor` in the XRI
-> starter rig, so if a Quest user picks up a controller, its trigger presses buttons too.
+> `XRRayInteractor` does not press. Hands only (owner ruling): the starter rig's controllers carry their
+> own `NearFarInteractor` and poke, so `PokeButton` ignores interactors under the
+> `XRInputModalityManager`'s controller objects (`PokeButton_Controller*` tests,
+> `HandsOnlyRigTests` for the scene wiring).
 
 ### Task 7: Build, simulator evidence, PR
 

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Filtering;
+using UnityEngine.XR.Interaction.Toolkit.Inputs;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
@@ -9,9 +10,9 @@ namespace AutismVR.Interaction
 {
     // A button pressed with a fingertip from above (it lies flat, facing up), or with look-and-pinch:
     // on Meta VR Glasses that arrives as the hand's NearFarInteractor select. The Quest hand ray is the
-    // same interactor, so a far hand-ray pinch on Quest presses too (accepted by the owner, F3). In the
-    // XRI starter rig a controller's ray is also a NearFarInteractor, so a controller trigger presses as
-    // well. The teleport XRRayInteractor and gaze dwell are ignored.
+    // same interactor, so a far hand-ray pinch on Quest presses too (accepted by the owner, F3). Hands
+    // only: interactors under the rig's controllers (as named by its XRInputModalityManager) are
+    // ignored, as are the teleport XRRayInteractor and gaze dwell.
     [RequireComponent(typeof(XRSimpleInteractable), typeof(XRPokeFilter))]
     public class PokeButton : MonoBehaviour
     {
@@ -57,9 +58,21 @@ namespace AutismVR.Interaction
         {
             if (args.interactorObject is not (XRPokeInteractor or NearFarInteractor))
                 return;
+            if (IsOnController(args.interactorObject.transform))
+                return;
 
             PressCount++;
             m_Pressed.Invoke();
         }
+
+        static bool IsOnController(Transform interactor)
+        {
+            var modality = FindAnyObjectByType<XRInputModalityManager>(FindObjectsInactive.Include);
+            if (modality == null)
+                return false;
+            return IsUnder(interactor, modality.leftController) || IsUnder(interactor, modality.rightController);
+        }
+
+        static bool IsUnder(Transform interactor, GameObject root) => root != null && interactor.IsChildOf(root.transform);
     }
 }

@@ -32,4 +32,4 @@ Runtime name `Meta XR Simulator`; HMD name `Head Tracking - OpenXR`.
 
 **Consequence for `PokeButton`:** accepting `NearFarInteractor` selects lets Glasses users press
 buttons, but also lets Quest users press with a far hand-ray pinch. The owner decides which
-behaviour to keep: the owner accepted far-pinch presses on Quest (F3).
+behaviour to keep: the owner accepted far-pinch presses on Quest, hands only; controller interactors are ignored (F3).

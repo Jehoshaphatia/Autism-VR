@@ -61,5 +61,22 @@ namespace AutismVR.Tests.EditMode
             Assert.That(metaQuest, Is.Not.Null);
             Assert.That(metaQuest.ForceRemoveInternetPermission, Is.False);
         }
+    
+        // Quest 1 cannot run minSdk 32, and Quest Pro is not a target device (spec §3).
+        [Test]
+        public void MetaQuestTargetDevicesAreQuest2And3Family()
+        {
+            var feature = OpenXRSettings.GetSettingsForBuildTargetGroup(BuildTargetGroup.Android).GetFeature<MetaQuestFeature>();
+            var devices = new SerializedObject(feature).FindProperty("targetDevices");
+            var enabled = new System.Collections.Generic.List<string>();
+            for (var i = 0; i < devices.arraySize; i++)
+            {
+                var device = devices.GetArrayElementAtIndex(i);
+                if (device.FindPropertyRelative("enabled").boolValue)
+                    enabled.Add(device.FindPropertyRelative("manifestName").stringValue);
+            }
+
+            Assert.That(enabled, Is.EquivalentTo(AutismVR.Editor.XrSetupCommands.TargetDeviceManifestNames));
+        }
     }
 }

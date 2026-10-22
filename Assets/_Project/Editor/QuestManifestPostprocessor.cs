@@ -5,15 +5,14 @@ using UnityEditor.Android;
 
 namespace AutismVR.Editor
 {
-    // The OpenXR package marks oculus.software.eye_tracking as required whenever eye gaze is
-    // enabled and Quest Pro is a target device. Eye gaze is optional here (Meta VR Glasses and
-    // Quest Pro use it; Quest 2 and Quest 3 have no eye tracking), so a required entry would hide
-    // the app from Quest 2 and Quest 3 in the store.
+    // Store-facing feature flags: eye tracking is optional (Quest 2 and Quest 3 have none; Meta VR
+    // Glasses use it), and hand tracking is required because the app has no controller support.
     public class QuestManifestPostprocessor : IPostGenerateGradleAndroidProject
     {
         const string AndroidNs = "http://schemas.android.com/apk/res/android";
         const string ToolsNs = "http://schemas.android.com/tools";
         const string EyeTrackingFeature = "oculus.software.eye_tracking";
+        const string HandTrackingFeature = "oculus.software.handtracking";
 
         // After the OpenXR and XR Hands manifest hooks.
         public int callbackOrder => 10000;
@@ -28,30 +27,39 @@ namespace AutismVR.Editor
 
                 var doc = new XmlDocument();
                 doc.Load(manifestPath);
-                if (MakeEyeTrackingOptional(doc))
+                var changed = MakeEyeTrackingOptional(doc);
+                changed |= RequireHandTracking(doc);
+                if (changed)
                     doc.Save(manifestPath);
             }
         }
 
         // The required entry is contributed by a library manifest during Gradle's manifest merge, after
         // every Unity hook has run, so declare it here with tools:replace to win that merge.
-        public static bool MakeEyeTrackingOptional(XmlDocument manifest)
+        public static bool RequireHandTracking(XmlDocument manifest) => SetFeatureRequired(manifest, HandTrackingFeature, true);
+
+        public static bool MakeEyeTrackingOptional(XmlDocument manifest) => SetFeatureRequired(manifest, EyeTrackingFeature, false);
+
+        // Library manifests contribute these uses-feature entries during Gradle's manifest merge, after
+        // every Unity hook has run, so declare them here with tools:replace to win that merge.
+        static bool SetFeatureRequired(XmlDocument manifest, string featureName, bool required)
         {
             var root = manifest.DocumentElement;
+            var value = required ? "true" : "false";
             var feature = manifest.GetElementsByTagName("uses-feature").Cast<XmlElement>()
-                .FirstOrDefault(element => element.GetAttribute("name", AndroidNs) == EyeTrackingFeature);
+                .FirstOrDefault(element => element.GetAttribute("name", AndroidNs) == featureName);
             var changed = false;
 
             if (feature == null)
             {
                 feature = manifest.CreateElement("uses-feature");
-                feature.SetAttribute("name", AndroidNs, EyeTrackingFeature);
+                feature.SetAttribute("name", AndroidNs, featureName);
                 root.PrependChild(feature);
                 changed = true;
             }
-            if (feature.GetAttribute("required", AndroidNs) != "false")
+            if (feature.GetAttribute("required", AndroidNs) != value)
             {
-                feature.SetAttribute("required", AndroidNs, "false");
+                feature.SetAttribute("required", AndroidNs, value);
                 changed = true;
             }
             if (feature.GetAttribute("replace", ToolsNs) != "android:required")

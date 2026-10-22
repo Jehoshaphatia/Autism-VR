@@ -186,9 +186,15 @@ voice.
   (`M3DMale`), the room, a score canvas and an intro canvas. `_Scenes/Autism01`
   is a near-duplicate; `Autism_Level_1` is a bare room with a camera.
   Approach: open the project in Unity 6.6 so the Editor upgrades the assets, then
-  build one new scene from Autism1's room and child, with a fresh XRI rig instead
-  of the old Vive/Oculus/Google rigs. The other legacy scenes are removed once the
-  new scene works.
+  build one new scene from Autism1's room, with a fresh XRI rig instead of the old
+  Vive/Oculus/Google rigs. The other legacy scenes are removed once the new scene
+  works.
+- **Done in F2:** `Assets/_Project/Scenes/Room.unity` is now the main scene and the
+  source of truth; Autism1 and the other legacy scenes are deleted. Room keeps
+  Autism1's room, a `TrainerSpawn` at the old player start and a `ChildSpawn` at
+  the old child position. The old child's animation and setup did not carry over
+  (it was the removed MORPH3D character); F3 places the new children at
+  `ChildSpawn`.
 - **Three child characters (owner):** `Assets/Aj.fbx`, `Assets/Ch12_nonPBR.fbx`,
   `Assets/Ch46_nonPBR.fbx` (added 2026-10-21), replacing the MORPH3D `M3DMale`
   child; MORPH3D is removed with the other legacy packages. All three are Mixamo
@@ -352,7 +358,7 @@ voice.
 | 18 | Supabase developed locally with the CLI on OrbStack | owner |
 | 19 | Trainers see only trainees assigned to them | owner |
 | 20 | XRI on all three devices, including Meta VR Glasses (Unity 6.6 + XR Hands 1.9+) | owner (confirmed) |
-| 21 | Main scene: `_Scenes/Autism1`; rebuild a new scene from its room and child | assistant's call (delegated) |
+| 21 | Main scene: `_Scenes/Autism1`'s room rebuilt as `_Project/Scenes/Room.unity` (F2); Autism1 deleted | assistant's call (delegated) |
 | 22 | Trigger catalog edited by the owner and platform admins; one global catalog | owner / assistant's call (global) |
 | 23 | Owner provides a new child character; MORPH3D removed | owner |
 | 24 | Device order, distribution, language, provisional triggers, WebRTC via Edge Function (§8a) | assistant's calls |

@@ -5,7 +5,8 @@ using UnityEditor.Build.Reporting;
 
 namespace AutismVR.Editor
 {
-    // Entry point for `unity build --execute-method AutismVR.Editor.BuildCommands.BuildQuest -o <apk>`.
+    // Entry point for `unity build --execute-method AutismVR.Editor.BuildCommands.BuildQuest -o <apk>`;
+    // the Unity CLI forwards -o as -buildOutput.
     public static class BuildCommands
     {
         public const string DefaultOutputPath = "Builds/Quest/AutismVR.apk";

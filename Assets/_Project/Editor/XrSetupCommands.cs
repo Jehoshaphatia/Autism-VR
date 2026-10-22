@@ -13,6 +13,10 @@ namespace AutismVR.Editor
 {
     public static class XrSetupCommands
     {
+        // Meta Quest Support manifest names: Quest 2, Quest 3 ("eureka"), Quest 3S. Quest 1 cannot run
+        // minSdk 32; Quest Pro is not a target device.
+        public static readonly string[] TargetDeviceManifestNames = { "quest2", "eureka", "quest3s" };
+
         const string GeneralSettingsPath = "Assets/XR/XRGeneralSettingsPerBuildTarget.asset";
         const string OpenXrLoaderType = "UnityEngine.XR.OpenXR.OpenXRLoader";
 
@@ -33,6 +37,7 @@ namespace AutismVR.Editor
 
             EnableFeatures(BuildTargetGroup.Android, AndroidFeatures);
             EnableFeatures(BuildTargetGroup.Standalone, StandaloneFeatures);
+            SetTargetDevices();
 
             AssetDatabase.SaveAssets();
             return "xr";
@@ -68,6 +73,20 @@ namespace AutismVR.Editor
                 perBuildTarget.CreateDefaultManagerSettingsForBuildTarget(group);
 
             XRPackageMetadataStore.AssignLoader(perBuildTarget.ManagerSettingsForBuildTarget(group), OpenXrLoaderType, group);
+        }
+
+        static void SetTargetDevices()
+        {
+            var feature = OpenXRSettings.GetSettingsForBuildTargetGroup(BuildTargetGroup.Android).GetFeature<MetaQuestFeature>();
+            var serialized = new SerializedObject(feature);
+            var devices = serialized.FindProperty("targetDevices");
+            for (var i = 0; i < devices.arraySize; i++)
+            {
+                var device = devices.GetArrayElementAtIndex(i);
+                device.FindPropertyRelative("enabled").boolValue =
+                    Array.IndexOf(TargetDeviceManifestNames, device.FindPropertyRelative("manifestName").stringValue) >= 0;
+            }
+            serialized.ApplyModifiedPropertiesWithoutUndo();
         }
 
         static void EnableFeatures(BuildTargetGroup group, Type[] featureTypes)

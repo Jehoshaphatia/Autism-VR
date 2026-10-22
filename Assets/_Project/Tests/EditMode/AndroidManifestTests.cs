@@ -71,5 +71,26 @@ namespace AutismVR.Tests.EditMode
 
             Assert.That(QuestManifestPostprocessor.MakeEyeTrackingOptional(doc), Is.False);
         }
+    
+        // The app has no controller support (spec §3: hands only), so the store must not offer it to
+        // controller-only setups.
+        [Test]
+        public void RequireHandTracking_OptionalEntry_BecomesRequired()
+        {
+            var doc = Manifest("true");
+
+            Assert.That(QuestManifestPostprocessor.RequireHandTracking(doc), Is.True);
+            Assert.That(RequiredOf(doc, "oculus.software.handtracking"), Is.EqualTo("true"));
+        }
+
+        [Test]
+        public void RequireHandTracking_NoEntry_AddsRequiredEntryThatOverridesLibraries()
+        {
+            var doc = new XmlDocument();
+            doc.LoadXml($@"<manifest xmlns:android=""{AndroidNs}""><application /></manifest>");
+
+            Assert.That(QuestManifestPostprocessor.RequireHandTracking(doc), Is.True);
+            Assert.That(RequiredOf(doc, "oculus.software.handtracking"), Is.EqualTo("true"));
+        }
     }
 }
